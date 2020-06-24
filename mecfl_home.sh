@@ -304,7 +304,7 @@ do
 				echo "We don't have any non-test job errors, so we won't do anything." > /dev/null
 			else
 				# ssh ${WS_USER}@${MMI} "/usr/bin/aplay ~wx11mj/sounds/KDE_Beep_Beep.wav ~wx11mj/sounds/KDE_Beep_Beep.wav ~wx11mj/sounds/KDE_Beep_Beep.wav" 2> /dev/null
-				ssh ${WS_USER}@${MMI} "/usr/bin/afplay /Users/truby1980/sounds/boing.au" 2> /dev/null
+				ssh ${WS_USER}@${MMI} "/usr/bin/afplay /Users/ylin/sounds/boing.au" 2> /dev/null
 			fi
 		fi
 		# ----------------------------

@@ -1,0 +1,10 @@
+##!/bin/sh
+if [ $# -gt 0 ]
+then
+  day=$1
+else
+  day=`date +%Y%m%d`
+fi
+
+cd /gpfs/dell1/nco/ops/dcom/prod/$day/wgrbbul/ecmwf
+echo Now in `pwd`

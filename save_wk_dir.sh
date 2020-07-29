@@ -9,7 +9,7 @@
 suffix=`date +%Y%m%d_%H%MZ`
 if [ $# -gt 0 ]; then
   output_file=$1
-  odisk=`echo $output_file | cut -c 6-9`
+  odisk=`echo $output_file | cut -c 7-9`
   if [ $odisk = del ]
   then
     dest="/gpfs/dell3/ptmp/nwprod"

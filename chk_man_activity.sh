@@ -2,12 +2,13 @@
 # Deyong Xu, 10/29/2017
 # Modified 04/01/2020 by Justin Cooke for Dell ecFlow servers
 #
+# from /ecf/ecfutils/chk_man_activity.sh, 2020/07/21
 # Purpose : 
 #    Show which jobs that have been touched by SOS/SPA.
 #    We want to make sure that these jobs are properly re-queued, especially when 
 #    the time they were touched is right before 00Z. 
 # How to run 
-#   $ ./chk_man_activity.sh
+#   $ ./chk_man_activity.sh $ecf_server (e.g. vecflow2)
 #  
 
 ECF_EXEC_ROOT=$(readlink -f /ecf)
@@ -48,8 +49,8 @@ function shortenMsg {
 header
 
 # Determine active ecFlow host
-
-extHostname=$(${ECF_EXEC_ROOT}/ecfutils/exthostname.pl)
+#extHostname=$(${ECF_EXEC_ROOT}/ecfutils/exthostname.pl)
+extHostname=$1
 
 # Define two arrays 
 # Ecflow log file descriptions

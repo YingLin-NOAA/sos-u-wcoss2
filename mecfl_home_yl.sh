@@ -1,12 +1,12 @@
 #!/bin/ksh
-VERSION=20200308
+VERSION=20200731
 
-if [ $# -ne 2 ]
+if [ $# -ne 1 ]
 then
-     echo "$0 Usage: arg1 = mmirc and arg2 = machine to monitor"
+     echo "$0 Usage: arg1 = machine to monitor (full name or abbreviation)"
      exit 1
 else
-    monitored_ecflow=$2
+     arg1=$1
 fi
 
 print ""
@@ -23,6 +23,20 @@ print "#==================================================================#"
        #                                                                  #
        #  Revison History                                                 #
        #  ---------------                                                 #
+       #  31 July  2020 - YL: run with a single argument for ecf server   # 
+       #    1) argument is either the full name of the ecflow server      #
+       #       (vecflow1, ldecflow1 etc., should contain the string       #
+       #       'ecflow', or a 2-character code for one of the four        #
+       #       ecf servers below:                                         #
+       #                         m1 - mecflow1                            #
+       #                         m2 - mecflow2                            #
+       #                         v1 - vecflow1                            #
+       #                         v1 - vecflow2                            #
+       #    2) get IP address using 'who'                                 #
+       #    3) Do not skip the sound for 'test', in honor of              #  
+       #       /test/network_monitor/p35/jtransfer_hera_p3                #
+       #                                                                  #
+       #  xx xxx   2020 - Justin modified for telework                    #
        #  24 July  2019 - modified warning message                        #
        #  23 July  2019 - add warning if not running on production node   #
        #  10 April 2015 - removed audible alarm for jobs in /test family  #
@@ -31,6 +45,24 @@ print "#==================================================================#"
        #   5 June  2013 - created                                         #
        #                                                                  #
        #------------------------------------------------------------------#
+
+#---------------------------------
+#  Which ecflow server to monitor?
+#---------------------------------
+# If argument to this script contains 'ecflow' (e.g. ldecflow1 or vecflow1), 
+# then assume the argument is the ecflow server: 
+#
+echo $arg1 | grep ecflow
+err=$?
+if [ $err -eq 0 ]; then 
+  monitored_ecflow=$arg1
+elif [ $arg1 = m1 -o $arg1 = m2 -o $arg1 = v1 -o $arg1 = v2 ]; then
+  p1=`echo $arg1 | cut -c 1-1`
+  s1=`echo $arg1 | cut -c 2-2`
+  monitored_ecflow=${p1}ecflow${s1}
+else
+  echo Unrecognized ecFlow server name or abbreviation ${arg1}.  EXIT.
+fi
 
 #----------------------------
 #  Set up working environment
@@ -90,7 +122,6 @@ SUM="/usr/bin/sum"
 #  If the user isn't mapped
 #    audio alarms cannot be enabled
 #-----------------------------------
-USER="`/usr/bin/whoami`"
 CUT_USER="`/usr/bin/whoami | cut -c1-8`"
 case ${CUT_USER} in
         "Justin.C" ) WS_USER="truby1980" ;;
@@ -110,25 +141,10 @@ export USER WS_USER
 # Determine where we're logged in
 #   so that audible alarms can be
 #   sent back there
-#  If the local workstation isn't 
-#    identified audio alarms cannot 
-#    be enabled
-#    (only listed workstations are 
-#      supported)
-#-----------------------------------
-if [ "${1}" = "" ]
-then
-	LAST_WS="`last | grep ${CUT_USER} | head -1 | awk ' { print $3 } '`"
-	case ${LAST_WS} in
-		"nco-lw-sos1.ncep" ) MMI="nco-lw-sos1.ncep.noaa.gov" ;;
-		"nco-lw-sos2.ncep" ) MMI="nco-lw-sos2.ncep.noaa.gov" ;;
-		"nco-lw-sos3.ncep" ) MMI="nco-lw-sos3.ncep.noaa.gov" ;;
-		                 * ) AUDIO="NO" ;;
-	esac
-else
-	MMI="${1}"
-fi
-export MMI
+
+# I've seen instances of two different IP addresses ... so using the last one, 
+# which seems to be the latest log in.  
+export MMI=`who|grep "$USER"|grep -v localhost|tail -1|awk '{print $NF}'|sed 's/[()]//g'`
 
 echo "Running as ${USER} from ${WS_USER}@${MMI}"
 
@@ -295,7 +311,8 @@ do
 
 			while read line
 			do
-				echo ${line} | awk ' { print $4 } ' | cut -c1-6 | grep -v "\/test\/"  >> ${RECENT_ERROR_JOB_LIST}
+			  #	echo ${line} | awk ' { print $4 } ' | cut -c1-6 | grep -v "\/test\/"  >> ${RECENT_ERROR_JOB_LIST}
+			  	echo ${line} | awk ' { print $4 } ' | cut -c1-6  >> ${RECENT_ERROR_JOB_LIST}
 			done < "${RECENT_ERRORS}"
 
         		TRUE_ERROR_COUNT=`cat ${RECENT_ERROR_JOB_LIST}  | wc -l`

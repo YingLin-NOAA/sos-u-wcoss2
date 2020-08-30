@@ -17,6 +17,7 @@ grep -i \
   -e 'broken pipe' \
   -e 'connection timed out' \
   -e 'connection unexpectedly closed' \
+  -e 'DATACOUNT low on 1 or more CRITICAL ob type' \
   -e 'end-of-file during read' \
   -e fatal   \
   -e 'io timeout' \

@@ -14,13 +14,19 @@
 outfile=$1
 grep -i \
   -e 'abnormal exit' \
+  -e 'aborting execution on processor' \
+  -e 'Abort trap signal' \
   -e 'broken pipe' \
   -e 'connection timed out' \
+  -e 'could not find' \
   -e 'connection unexpectedly closed' \
   -e 'DATACOUNT low on 1 or more CRITICAL ob type' \
   -e 'end-of-file during read' \
-  -e fatal   \
+  -e 'Error reading' \
+  -e 'failed with exit code' \
+  -e fatal \
   -e 'io timeout' \
+  -e 'IOError' \
   -e killed \
   -e missing \
   -e 'no route to host' \

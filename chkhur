@@ -1,0 +1,17 @@
+#!/bin/sh
+out1=~/sos/out.dir/chkhur.out1
+out2=~/sos/out.dir/chkhur.out2
+rm -f $out1 $out2
+cd  /gpfs/hps/nco/ops/com/hur/prod/inphwrf;pwd;    cat   nstorms  storms.all;  echo "HWRF: # of storms `cat nstorms`  stormdate : `cat stormdate` " > $out1;  ls -l stormdate
+if [ -s storms.all ]
+then 
+  cat storms.all | cut -c 1-18 >> $out1
+fi
+cd  /gpfs/hps/nco/ops/com/hur/prod/inpdata;pwd;    cat   nstorms  storms.all;  echo "HMON: # of storms `cat nstorms`  stormdate : `cat stormdate` " > $out2;  ls -l stormdate 
+echo ""
+if [ -s storms.all ]
+then 
+  cat storms.all | cut -c 1-18 >> $out2
+fi
+cat $out1 $out2
+

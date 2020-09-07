@@ -49,6 +49,7 @@ else
     -e missing \
     -e 'no route to host' \
     -e 'rsync error' \
+    -e Sev1 \
     -e severe \
     -e SIGSEGV \
     -e WARN4 \

@@ -48,6 +48,7 @@ else
     -e killed \
     -e missing \
     -e 'no route to host' \
+    -e 'No GEMPAK parameter name defined for this grid' \
     -e 'rsync error' \
     -e Sev1 \
     -e severe \

@@ -40,6 +40,7 @@ else
     -e 'connection unexpectedly closed' \
     -e 'DATACOUNT low on 1 or more CRITICAL ob type' \
     -e 'end-of-file during read' \
+    -e 'err=[1-999]' \
     -e 'Error reading' \
     -e 'failed with exit code' \
     -e fatal \
@@ -53,6 +54,7 @@ else
     -e Sev1 \
     -e severe \
     -e SIGSEGV \
+    -e 'User defined signal' \
     -e WARN4 \
     -e {} \
     ${output_file} | sort -u

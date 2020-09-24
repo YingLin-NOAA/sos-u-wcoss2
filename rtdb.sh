@@ -1,7 +1,7 @@
 #!/bin/sh
 # From Justin originally, 2020/07/14
 # It runs /u/SDM/rtdb, which prints out (tail) the last 10 lines of 
-#   /gpfs/dell1/nco/ops/com/dashboard/para/realtime.$day/model_ncep.realtime.dashboard.info$day$day
+#   /gpfs/dell1/nco/ops/com/dashboard/para/realtime.$day/model_ncep.realtime.dashboard.info.$day
 
 h1=`hostname | cut -c 1-1`
 if [ $h1 = m ]; then

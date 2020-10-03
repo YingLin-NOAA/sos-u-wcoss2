@@ -36,6 +36,7 @@ else
     -e 'Abort trap signal' \
     -e 'broken pipe' \
     -e 'connection timed out' \
+    -e 'core dump' \
     -e 'could not find' \
     -e 'connection unexpectedly closed' \
     -e 'DATACOUNT low on 1 or more CRITICAL ob type' \
@@ -44,20 +45,24 @@ else
     -e 'Error reading' \
     -e 'failed with exit code' \
     -e fatal \
+    -e 'HPSS_ENOENT' \
     -e 'io timeout' \
     -e 'IOError' \
     -e killed \
     -e missing \
     -e 'no route to host' \
     -e 'No GEMPAK parameter name defined for this grid' \
+    -e 'refusing to create empty archive' \
     -e 'rsync error' \
     -e Sev1 \
     -e severe \
     -e SIGSEGV \
     -e 'User defined signal' \
     -e WARN4 \
-    -e {} \
     ${output_file} | sort -u
+
+# Remove this for now - runhistory has legit '{}'s.  
+#    -e {} \
 
   if [ $# -eq 2 ]
   then

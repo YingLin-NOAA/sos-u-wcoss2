@@ -39,7 +39,9 @@ else
     -e 'core dump' \
     -e 'could not find' \
     -e 'connection unexpectedly closed' \
+    -e 'CRITICAL FAILURE' \
     -e 'DATACOUNT low on 1 or more CRITICAL ob type' \
+    -e 'dump failed' \
     -e 'end-of-file during read' \
     -e 'err=[1-999]' \
     -e 'Error reading' \
@@ -52,11 +54,13 @@ else
     -e missing \
     -e 'no route to host' \
     -e 'No GEMPAK parameter name defined for this grid' \
+    -e 'RC=[1-999]' \
     -e 'refusing to create empty archive' \
     -e 'rsync error' \
     -e Sev1 \
     -e severe \
     -e SIGSEGV \
+    -e 'unable to set' \
     -e 'User defined signal' \
     -e WARN4 \
     ${output_file} | sort -u

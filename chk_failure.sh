@@ -35,6 +35,7 @@ else
     -e 'aborting execution on processor' \
     -e 'Abort trap signal' \
     -e 'broken pipe' \
+    -e 'claim exceeds' \
     -e 'connection timed out' \
     -e 'core dump' \
     -e 'could not find' \
@@ -45,6 +46,7 @@ else
     -e 'end-of-file during read' \
     -e 'err=[1-999]' \
     -e 'Error reading' \
+    -e failed \
     -e 'failed with exit code' \
     -e fatal \
     -e 'HPSS_ENOENT' \
@@ -53,12 +55,14 @@ else
     -e killed \
     -e missing \
     -e 'no route to host' \
+    -e 'no such file or directory' \
     -e 'No GEMPAK parameter name defined for this grid' \
     -e 'RC=[1-999]' \
     -e 'refusing to create empty archive' \
     -e 'rsync error' \
     -e Sev1 \
     -e severe \
+    -e Terminated \
     -e SIGSEGV \
     -e 'unable to set' \
     -e 'User defined signal' \

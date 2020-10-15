@@ -7,12 +7,6 @@
 #   2. nosave: do not save working directory, if optional 2nd argument is 
 #      'nosave'.  
 #
-# Why the 2nd argument is not 'save': when in a hurry one might not remember to 
-# supply the 2nd argument.  So I'm making 'saving wrkdir' the default.  If
-# after starting the script w/o supplying 'nosave' as second argment and you
-# decide not to save the wrkdir, just hit cntl-C when asked for password
-# during the 'sudo ... scp' step.  
-
 # 'sort -u' so that if there are, say hundreds of identical lines of 'SIGSEGV',
 #   only one will print out.
 #
@@ -22,7 +16,15 @@
 # run due to relatively large amounts of moisture in the stratosphere. But if 
 # you see lots of WARN# (WARN4 is usually bad) and then prints that start 
 # with "{}" then we got problems.
- 
+# Remove this for now - runhistory has legit '{}'s.  
+#    -e {} \
+# if failure is nam forecast related, search for {} in vi.
+
+# Note that 'FATAL ERROR' does not necessarily mean that's the cause for job
+# failure.  Plenty of successfully completed jobs have 'FATAL ERROR' in the
+# output when wgrib2 is used on a non-existant but optional input file. 
+# 
+
 suffix=`date +%Y%m%d_%H%MZ`
 
 if [ $# -eq 0 ]; then
@@ -69,8 +71,6 @@ else
     -e WARN4 \
     ${output_file} | sort -u
 
-# Remove this for now - runhistory has legit '{}'s.  
-#    -e {} \
 
   if [ $# -eq 2 ]
   then

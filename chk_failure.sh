@@ -64,6 +64,7 @@ else
     -e 'rsync error' \
     -e Sev1 \
     -e severe \
+    -e 'target_IP=' \
     -e Terminated \
     -e SIGSEGV \
     -e 'unable to set' \

@@ -1,6 +1,9 @@
 #!/bin/sh
 # 1. check job *.o file for a list of known error messages 
-# 2. save wrkdir using Hoai's script (optional)
+# 2. check model name in (downloaded daily by cron) Special Procedures
+# 3. (under development) check various output files in output dir for node_failed
+#    info
+# 4. save wrkdir using Hoai's script (optional)
 # 
 # Arguments:
 #   1. Job output file (required)
@@ -25,6 +28,9 @@
 # output when wgrib2 is used on a non-existant but optional input file. 
 # 
 
+# Special procedures are downloaded daily (cron'd wget):
+SPC_PRC=/gpfs/dell1/ptmp/$USER/Special_Procedures
+
 suffix=`date +%Y%m%d_%H%MZ`
 
 if [ $# -eq 0 ]; then
@@ -32,6 +38,9 @@ if [ $# -eq 0 ]; then
   exit
 else
   output_file=$1
+  # find model name; strip off trailing numbers (e.g. 'hmon2'):
+  modelx=`basename ${output_file} | awk -F "_" '{print $1}'`
+  model=${modelx//[0-9]/}
   grep -i \
     -e 'abnormal exit' \
     -e 'aborting execution on processor' \
@@ -42,12 +51,14 @@ else
     -e 'core dump' \
     -e 'could not find' \
     -e 'connection unexpectedly closed' \
+    -e 'CRITICAL:' \
     -e 'CRITICAL FAILURE' \
     -e 'DATACOUNT low on 1 or more CRITICAL ob type' \
     -e 'dump failed' \
     -e 'end-of-file during read' \
     -e 'err=[1-999]' \
     -e 'Error reading' \
+    -e 'exit signal aborted' \
     -e failed \
     -e 'failed with exit code' \
     -e fatal \
@@ -72,6 +83,27 @@ else
     -e WARN4 \
     ${output_file} | sort -u
 
+  # Is there an entry in the Special Procedures for $model?
+  grep -i "\ $model" ${SPC_PRC} > /dev/null
+  err=$?
+  if [ $err -eq 0 ]; then
+    echo 
+    echo $model has entry in Special Procedures
+    echo
+  fi
+
+  # Anything place other than the *.o file to look for errors?
+  data_dir=`grep " DATA=" ${output_file} | head -1 | cut -d "=" -f 2`
+  # for hmonx_couple_forecast:
+  if [[ "${output_file}" == *hmon* && "$output_file" == *forecast* ]]
+  then
+    moreout=${data_dir}/forecast/err.forecast
+    grep -i node_failed $moreout
+    if [ $? -eq 0 ] 
+    then 
+      echo in $moreout
+    fi
+  fi 
 
   if [ $# -eq 2 ]
   then
@@ -94,7 +126,7 @@ else
     exit
   fi 
   echo "extracting data directory from ${output_file}"
-  data_dir=`grep " DATA=" ${output_file} | head -1 | cut -d "=" -f 2`
+  
   filename=`basename ${data_dir}`
   echo "sudo -u nwprod cp -rp ${data_dir} ${dest}/${filename}_${suffix}"
   sudo -u nwprod cp -rp ${data_dir} ${dest}/${filename}_${suffix}

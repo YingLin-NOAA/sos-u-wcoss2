@@ -38,6 +38,12 @@ if [ $# -eq 0 ]; then
   exit
 else
   output_file=$1
+
+  # first see if the job has been preempted, if so, skip the rest:
+  grep TERM_PREEMPT $output_file
+  err=$?
+  if [ $err -eq 0 ]; then exit; fi
+ 
   # find model name; strip off trailing numbers (e.g. 'hmon2'):
   modelx=`basename ${output_file} | awk -F "_" '{print $1}'`
   model=${modelx//[0-9]/}
@@ -70,6 +76,7 @@ else
     -e 'no route to host' \
     -e 'no such file or directory' \
     -e 'No GEMPAK parameter name defined for this grid' \
+    -e 'PROBLEM ARCHIVING' \
     -e 'RC=[1-999]' \
     -e 'refusing to create empty archive' \
     -e 'rsync error' \

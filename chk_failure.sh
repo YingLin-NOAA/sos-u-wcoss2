@@ -89,7 +89,13 @@ else
     -e 'User defined signal' \
     -e WARN4 \
     ${output_file} | sort -u
-
+  
+  # Does the job use the intranet? 
+  # pnwps_datachk sends to intra.ncep.noaa.gov: 
+    grep intra ${output_file} | grep timeout | sort -u 
+    # The node_load job's output has just a couple of lines with nwprod@intra
+    # but the lines are very long, so print out just the last column:
+    grep \@intra ${output_file} | awk '{ print $NF }' 
   # Is there an entry in the Special Procedures for $model?
   grep -i "\ $model" ${SPC_PRC} > /dev/null
   err=$?

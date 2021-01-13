@@ -73,6 +73,7 @@ else
     -e 'IOError' \
     -e killed \
     -e missing \
+    -e 'MPI_Abort' \
     -e 'no route to host' \
     -e 'no such file or directory' \
     -e 'No GEMPAK parameter name defined for this grid' \

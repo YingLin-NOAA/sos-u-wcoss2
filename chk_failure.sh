@@ -88,6 +88,8 @@ else
     -e 'unable to set' \
     -e 'User defined signal' \
     -e WARN4 \
+    -e 'Max Memory' \
+    -e 'Total Requested Memory' \
     ${output_file} | sort -u
   
   # Does the job use the intranet? 

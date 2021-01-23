@@ -43,7 +43,27 @@ else
   grep TERM_PREEMPT $output_file
   err=$?
   if [ $err -eq 0 ]; then exit; fi
- 
+
+  # if the job output file contains hyspt_canned_post, and the error message
+  # is "HYSPLIT output DID NOT mirror successfully to", print out the lines
+  # containing this err msg.
+  echo $output_file | grep hyspt_canned_post 
+  err1=$?
+  if [ $err1 -eq 0 ]; then
+    # proceed if the otuput file does contain the 'DID NOT mirror' message
+    # (supress outout of matching line here (-q), check $? to see if there
+    # is a match:
+    grep -q 'HYSPLIT output DID NOT mirror successfully' $output_file
+    err2=$?
+    if [ $err2 -eq 0 ]; then
+      line0=`grep -n 'HYSPLIT output DID NOT mirror successfully' $output_file | head -1 | awk -F ":" '{ print $1 }'`
+      let line1=line0-1
+      let line2=line0+4
+      sed -n ${line1},${line2}p $output_file
+      exit
+    fi 
+  fi
+  
   # find model name; strip off trailing numbers (e.g. 'hmon2'):
   modelx=`basename ${output_file} | awk -F "_" '{print $1}'`
   model=${modelx//[0-9]/}

@@ -39,6 +39,12 @@ if [ $# -eq 0 ]; then
 else
   output_file=$1
 
+  if [ ! -s $output_file ]
+  then
+    echo $output_file does not exist! 
+    exit
+  fi
+
   # first see if the job has been preempted, if so, skip the rest:
   grep TERM_PREEMPT $output_file
   err=$?

@@ -107,6 +107,7 @@ else
     -e 'RC=[1-999]' \
     -e 'refusing to create empty archive' \
     -e 'rsync error' \
+    -e 'Send alert message to' \
     -e Sev1 \
     -e severe \
     -e 'target_IP=' \

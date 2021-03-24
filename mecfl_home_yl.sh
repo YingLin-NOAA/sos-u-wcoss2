@@ -311,8 +311,8 @@ do
 
 			while read line
 			do
-			  #	echo ${line} | awk ' { print $4 } ' | cut -c1-6 | grep -v "\/test\/"  >> ${RECENT_ERROR_JOB_LIST}
-			  	echo ${line} | awk ' { print $4 } ' | cut -c1-6  >> ${RECENT_ERROR_JOB_LIST}
+			  	echo ${line} | awk ' { print $4 } ' | cut -c1-6 | grep -v "\/test\/"  >> ${RECENT_ERROR_JOB_LIST}
+# exclude /test failures:  	echo ${line} | awk ' { print $4 } ' | cut -c1-6  >> ${RECENT_ERROR_JOB_LIST}
 			done < "${RECENT_ERRORS}"
 
         		TRUE_ERROR_COUNT=`cat ${RECENT_ERROR_JOB_LIST}  | wc -l`

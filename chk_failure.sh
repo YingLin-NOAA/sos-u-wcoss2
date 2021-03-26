@@ -77,6 +77,7 @@ else
     -e 'abnormal exit' \
     -e 'aborting execution on processor' \
     -e 'Abort trap signal' \
+    -e 'bad file descriptor' \
     -e 'broken pipe' \
     -e 'claim exceeds' \
     -e 'connection timed out' \
@@ -103,6 +104,7 @@ else
     -e 'no route to host' \
     -e 'no such file or directory' \
     -e 'No GEMPAK parameter name defined for this grid' \
+    -e 'Permission denied' \
     -e 'PROBLEM ARCHIVING' \
     -e 'RC=[1-999]' \
     -e 'refusing to create empty archive' \
@@ -114,6 +116,8 @@ else
     -e Terminated \
     -e SIGSEGV \
     -e 'unable to set' \
+    -e 'unexplained error' \
+    -e 'Unsupported option' \
     -e 'User defined signal' \
     -e WARN4 \
     -e 'Max Memory' \

@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # check to see if files needed for the  
-# /prod??/gfs/post_processing/grib2_wafs/jgfs_wafs_blending job have arrived
+# /prod??/gfs/atmos/post_processing/grib2_wafs/jgfs_atmos_wafs_blending job have arrived
 #
 # This job needs one argument, yyyymmddhh, where hh=00/06/12/18
 # The 00/06/12/18Z jgfs_wafs_blending runs at 0433/1033/1633/2233Z.  Data

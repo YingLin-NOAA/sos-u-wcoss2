@@ -90,6 +90,7 @@ else
     -e 'dump failed' \
     -e 'end-of-file during read' \
     -e 'err=[1-999]' \
+    -e 'ERROR'\
     -e 'Error reading' \
     -e 'exit signal aborted' \
     -e failed \

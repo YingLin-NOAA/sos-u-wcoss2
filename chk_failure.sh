@@ -97,6 +97,7 @@ else
     -e 'failed with exit code' \
     -e fatal \
     -e 'HPSS_ENOENT' \
+    -e 'invalid' \
     -e 'io timeout' \
     -e 'IOError' \
     -e killed \

@@ -51,7 +51,12 @@ then
    mkdir -p $outdir
 fi
 
-grep $USER $LOG | egrep -v 'NEWS|--edit_history|--file=|--server|--stats|--sync' > $outdir/chk_my_activity.$ecfserver.$day
+#grep $USER $LOG | egrep -v 'NEWS|--edit_history|--file=|--server|--stats|--sync' > $outdir/chk_my_activity.$ecfserver.$day
+
+grep -v 'MSG.*MSG' $LOG | grep $USER | \
+  egrep \
+  'aborted.*reason|-alter|-force|-requeue|-run|-suspend' \
+  > $outdir/chk_my_activity.$ecfserver.$day
 
 exit
 

@@ -8,7 +8,7 @@
 #    We want to make sure that these jobs are properly re-queued, especially when 
 #    the time they were touched is right before 00Z. 
 # How to run 
-#   $ ./chk_man_activity.sh $ecf_server (e.g. vecflow2)
+#   $ ./chk_my_activity.sh $ecf_server (e.g. vecflow2)
 #
 # YL, 2021/03/31 review my own activities on ecf UI
   

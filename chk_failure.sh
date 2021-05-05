@@ -124,8 +124,11 @@ else
     -e WARN4 \
     -e 'Max Memory' \
     -e 'Total Requested Memory' \
-    ${output_file} | sort -u
+    ${output_file} | sort -u | grep -v 'eval ATP_HOME='
   
+  # The grep -v 'eval ATP_HOME=' is to filter out the excessively long line
+  #   from a cray output
+
   # Does the job use the intranet? 
   # pnwps_datachk sends to intra.ncep.noaa.gov: 
     grep intra ${output_file} | grep timeout | sort -u 

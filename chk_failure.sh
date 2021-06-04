@@ -70,6 +70,10 @@ else
     fi 
   fi
   
+  # jcfs_cdas_vrfyfits:
+  #    BUFR ARCHIVE LIBRARY ABORT
+  #    selecetfile cannot id filetype 
+
   # find model name; strip off trailing numbers (e.g. 'hmon2'):
   modelx=`basename ${output_file} | awk -F "_" '{print $1}'`
   model=${modelx//[0-9]/}
@@ -79,6 +83,7 @@ else
     -e 'Abort trap signal' \
     -e 'bad file descriptor' \
     -e 'broken pipe' \
+    -e 'BUFR ARCHIVE LIBRARY ABORT' \
     -e 'claim exceeds' \
     -e 'connection timed out' \
     -e 'core dump' \
@@ -111,6 +116,7 @@ else
     -e 'RC=[1-999]' \
     -e 'refusing to create empty archive' \
     -e 'rsync error' \
+    -e 'selecetfile cannot id filetype' \
     -e 'Send alert message to' \
     -e Sev1 \
     -e severe \

@@ -130,10 +130,11 @@ else
     -e WARN4 \
     -e 'Max Memory' \
     -e 'Total Requested Memory' \
-    ${output_file} | sort -u | grep -v 'eval ATP_HOME=' | grep -v 'LIBRARY_PATH'
+    ${output_file} | sort -u | grep -v ' + eval ' | grep -v 'LIBRARY_PATH'
   
   # The grep -v 'eval ATP_HOME=' is to filter out the excessively long line
-  #   from a cray output
+  #   from cray output:
+  #   e.g. rap_postsnd_15:       ++1 + eval AR=ar ';export' 'AR;ARFLAGS=rv' ';export' ....
   # LMOD_REF_COUNT_LD_LIBRARY: long line in wsa_enlil output
   # Does the job use the intranet? 
   # pnwps_datachk sends to intra.ncep.noaa.gov: 

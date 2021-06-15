@@ -95,7 +95,7 @@ fi
 #grep -v 'MSG.*MSG' $ECFLOG | grep -v ':nwprod' | \
 egrep -v 'MSG.*MSG|-alter change label|:ecfprod|:nwprod' $ECFLOG | \
   egrep \
-  'aborted.*reason|-alter|-force|-requeue|-resume|-run|-suspend' \
+  'aborted.*reason|-alter|-force|-kill|-requeue|-resume|-run|-suspend|submit_file' \
   >> $sumfile
 
 exit

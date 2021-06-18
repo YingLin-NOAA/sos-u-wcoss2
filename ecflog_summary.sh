@@ -1,5 +1,5 @@
 #!/bin/sh
-VERSION=20210421
+VERSION=20210616
 
   #=======================================================================#
   #                                                                       #
@@ -8,10 +8,13 @@ VERSION=20210421
   #    This is a simplified combination of mecfl.sh and chk_man_activity  #
   #    Human (non-nwprod, non-ecfprod) actions listed:                    #
   #      --alter (e.g. --alter change defstatus complete, etc.)           #
-  #      --force=complete                                                 #
-  #      --requeue force                                                  #
+  #      --force (=complete, queued)                                      #
+  #      --kill                                                           #
+  #      --requeue                                                        #
+  #      --resume                                                         #
   #      --run                                                            #
   #      --suspend                                                        #
+  #      submit_file (i.e. --edit_script= ... submit_file)                #
   #                                                                       #
   #  Usage:                                                               #
   #    Arg1: name of ecflow server, or a 2-character code for one of      # 
@@ -19,7 +22,9 @@ VERSION=20210421
   #         m1 - mecflow1                                                 #
   #         m2 - mecflow2                                                 #
   #         v1 - vecflow1                                                 #
-  #         v1 - vecflow2                                                 #
+  #         v1 - vecflow2                                                 # 
+  #      if no argument is present, the (current) ecflow server name is   #
+  #        extracted from /ecf/rundir/switch_ecflow.log                   #
   #    Arg2 (optional): N (days prior to today)                           #
   #                                                                       #
   #  Example:                                                             #
@@ -39,32 +44,34 @@ VERSION=20210421
 # If argument to this script contains 'ecflow' (e.g. ldecflow1 or vecflow1), 
 # then assume the argument is the ecflow server: 
 #
-if [ $# -lt 1 ]
+if [ $# -eq 0 ]
 then
-  echo 'This script requires at least one argument, [m/v]ecflow[1/2].'
-  echo 'Optional arg2: check ecflog from $arg2 days before'
-  exit
+  ecfserver=`tail -1 /ecf/rundir/switch_ecflow.log | awk '{print $5}'`
+  shortecfname=${ecfserver:0:1}${ecfserver: -1}
 else
   arg1=$1
   echo $arg1 | grep ecflow
   err=$?
   if [ $err -eq 0 ]; then 
     ecfserver=$arg1
+    shortecfname=${ecfserver:0:1}${ecfserver: -1}
   elif [ $arg1 = m1 -o $arg1 = m2 -o $arg1 = v1 -o $arg1 = v2 ]; then
-    p1=`echo $arg1 | cut -c 1-1`
-    s1=`echo $arg1 | cut -c 2-2`
+    shortecfname=$arg1
+    p1=${arg1:0:1}
+    s1=${arg1: -1}
+    echo 'p1, s1=', $p1, $s1
     ecfserver=${p1}ecflow${s1}
   else
     echo Unrecognized ecFlow server name or abbreviation \"${arg1}\".  EXIT.
     exit
   fi
+fi
 
-  if [ $# -eq 1 ]
-  then
-    nback=0
-  else
-    nback=$2
-  fi
+if [ $# -lt 2 ]
+then
+  nback=0
+else
+  nback=$2
 fi
 
 LOGDIR=/ecf/rundir
@@ -82,7 +89,7 @@ then
    mkdir -p $outdir
 fi
 
-sumfile=$outdir/$ecfserver.sum.$day
+sumfile=$outdir/$day.$shortecfname
 if [ -s $sumfile ]
 then
   rm -f $sumfile
@@ -92,10 +99,13 @@ fi
 # Display message if we're just getting started
 #----------------------------------------------
 
-#grep -v 'MSG.*MSG' $ECFLOG | grep -v ':nwprod' | \
 egrep -v 'MSG.*MSG|-alter change label|:ecfprod|:nwprod' $ECFLOG | \
   egrep \
   'aborted.*reason|-alter|-force|-kill|-requeue|-resume|-run|-suspend|submit_file' \
   >> $sumfile
 
+# Print out $sumfile so alias 'logv' can go directly to view it.  Wait for a second, else 'view +' in logv won't get the latest 
+# version of this job's output:
+echo $sumfile
+sleep 1
 exit

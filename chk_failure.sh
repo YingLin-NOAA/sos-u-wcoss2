@@ -130,7 +130,7 @@ else
     -e WARN4 \
     -e 'Max Memory' \
     -e 'Total Requested Memory' \
-    ${output_file} | sort -u | grep -v ' + eval ' | grep -v 'LIBRARY_PATH'
+    ${output_file} | sort -u | grep -v ' + eval ' | grep -v 'LIBRARY_PATH' | grep -v 'grep '
   
   # The grep -v 'eval ATP_HOME=' is to filter out the excessively long line
   #   from cray output:

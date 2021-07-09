@@ -64,6 +64,9 @@ else
   echo Unrecognized ecFlow server name or abbreviation ${arg1}.  EXIT.
 fi
 
+# Do not send email on the initial run - there'll be too many emailed texts. 
+initrun=YES
+
 #----------------------------
 #  Set up working environment
 #----------------------------
@@ -322,7 +325,13 @@ do
 			else
 				# ssh ${WS_USER}@${MMI} "/usr/bin/aplay ~wx11mj/sounds/KDE_Beep_Beep.wav ~wx11mj/sounds/KDE_Beep_Beep.wav ~wx11mj/sounds/KDE_Beep_Beep.wav" 2> /dev/null
 				# ssh ${WS_USER}@${MMI} "/usr/bin/afplay /Users/ylin/sounds/boing.au" 2> /dev/null
-                            egrep -i abort ${RECENT_ACTIVITY} | grep reason | awk '{print $4}' | mail 2406039701@txt.att.net
+                                # if this is the initial run, do not send email
+                            if [ $initrun = 'YES' ]
+                            then
+                              initrun=NO
+                            else
+                              egrep -i abort ${RECENT_ACTIVITY} | grep reason | awk '{print $4}' | mail 2406039701@txt.att.net
+                            fi
 			fi
 		fi
 		# ----------------------------

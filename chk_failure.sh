@@ -152,7 +152,17 @@ else
   fi
 
   # Anything place other than the *.o file to look for errors?
-  data_dir=`grep " DATA=" ${output_file} | head -1 | cut -d "=" -f 2`
+  # if the *.o file has specified a WORK_DIR (SREF), save that directory; 
+  # otherwise save 'DATA':
+  grep " WORK_DIR=" ${output_file}
+  err=$?
+  if [ $err -eq 0 ]
+  then
+    data_dir=`grep " WORK_DIR=" ${output_file} | head -1 | cut -d "=" -f 2`
+  else
+    data_dir=`grep " DATA=" ${output_file} | head -1 | cut -d "=" -f 2`
+  fi
+
   # for hmonx_couple_forecast:
   if [[ "${output_file}" == *hmon* && "$output_file" == *forecast* ]]
   then

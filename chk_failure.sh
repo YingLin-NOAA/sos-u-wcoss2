@@ -101,6 +101,7 @@ else
     -e failed \
     -e 'failed with exit code' \
     -e fatal \
+    -e 'file not found' \
     -e 'HPSS_ENOENT' \
     -e 'invalid' \
     -e 'io timeout' \
@@ -130,6 +131,7 @@ else
     -e WARN4 \
     -e 'Max Memory' \
     -e 'Total Requested Memory' \
+    -e 'your password' \
     ${output_file} | sort -u | grep -v ' + eval ' | grep -v 'LIBRARY_PATH' | grep -v 'grep '
   
   # The grep -v 'eval ATP_HOME=' is to filter out the excessively long line

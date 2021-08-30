@@ -6,12 +6,38 @@
 #   jgdas_dump_post that's (usually?) right above the dump_alert in the
 #   ecf_ui.  Run this script on that job's *.o file. 
 # 
+# History: 
+#   Created: 2020/10/29 YL
+#   Revision:
+#     2021/08/30: with Windows GFE, copy/paste is difficult from xterm to
+#     chat and from xterm to PuTTY window. Solution: extract the deficiency
+#     statement between the single quotes ('...') and pipe that to 
+#     /stmp/.../dumpout
+#
 if [ $# -ne 1 ]; then
   echo This script needs ONE argument: /path/*.o\$pid.  Exit
 else
   output_file=$1
-  grep DATACOUNT-deficiency ${output_file} | grep RED | grep 'msg='
 fi
 
+stmpdir=/gpfs/dell1/stmp/$USER
+if [ ! -d $stmpdir ]
+then
+  mkdir -p $stmpdir
+fi
+
+grep DATACOUNT-deficiency ${output_file} | grep RED | grep 'msg=' | tee $stmpdir/dump.tmp
+
+cd $stmpdir
+if [ -e dumpout ]; then rm -f dumpout; fi
+
+cat dump.tmp | while read s
+do
+  s=${s#*"'"}; s=${s%"'"*}
+  echo $s >> dumpout
+done
+  
 exit
+
+
 

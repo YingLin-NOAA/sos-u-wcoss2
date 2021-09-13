@@ -92,6 +92,7 @@ else
     -e 'CRITICAL:' \
     -e 'CRITICAL FAILURE' \
     -e 'DATACOUNT low on 1 or more CRITICAL ob type' \
+    -e 'Disk quota exceeded' \
     -e 'dump failed' \
     -e 'end-of-file during read' \
     -e 'err=[1-999]' \

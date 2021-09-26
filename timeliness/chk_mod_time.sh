@@ -1,6 +1,6 @@
 #!/bin/sh
 # check timeliness of GFS atmos master files, compare today against yesterday
-
+set -x
 if [ $# -lt 2 ]
 then
   echo 'Need at least two argument: 1) model 2) cycle (00/06/12/18) 3) yyyymmdd (if not today) '

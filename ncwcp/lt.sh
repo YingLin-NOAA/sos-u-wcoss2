@@ -46,7 +46,7 @@ if [ -f ${BASEPATH}/lt_prep.sh ]
 then
 	. ${BASEPATH}/lt_prep.sh
 else
-	. /u/nwprod/TOOLS/lt_prep.sh
+	. /u/$USER/sos/ncwcp/lt_prep.sh
 fi
 
 #

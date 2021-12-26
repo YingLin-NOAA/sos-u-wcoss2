@@ -118,6 +118,8 @@ else
     -e 'RC=[1-999]' \
     -e 'refusing to create empty archive' \
     -e 'rsync error' \
+    -e 'SegFault' \
+    -e 'Segmentation fault' \
     -e 'selecetfile cannot id filetype' \
     -e 'Send alert message to' \
     -e Sev1 \
@@ -133,7 +135,7 @@ else
     -e 'Max Memory' \
     -e 'Total Requested Memory' \
     -e 'your password' \
-    ${output_file} | sort -u | grep -v ' + eval ' | grep -v 'LIBRARY_PATH' | grep -v 'grep '
+    ${output_file} | sort -u | grep -v ' + eval ' | grep -v 'LIBRARY_PATH' | grep -v 'grep ' | grep -v 'ERROR 0' | grep -v 'ERROR \$'
   
   # The grep -v 'eval ATP_HOME=' is to filter out the excessively long line
   #   from cray output:

@@ -1,12 +1,21 @@
 #!/bin/ksh
-VERSION=20200731
+VERSION=20220111
 
-if [ $# -ne 1 ]
+if [ $# -lt 1 ]
 then
-     echo "$0 Usage: arg1 = machine to monitor (full name or abbreviation)"
-     exit 1
+  echo "$0 Usage: arg1 = machine to monitor (full name or abbreviation)"
+  exit 1
 else
-     arg1=$1
+  arg1=$1
+  sendmail=Y
+  if [ $# -gt 1 ]
+  then
+    arg2=$2
+    if [[ $arg2 = nomail || $arg2 = noemail ]]
+    then
+      sendmail=N
+    fi 
+  fi
 fi
 
 print ""
@@ -334,13 +343,17 @@ do
 				# ssh ${WS_USER}@${MMI} "/usr/bin/aplay ~wx11mj/sounds/KDE_Beep_Beep.wav ~wx11mj/sounds/KDE_Beep_Beep.wav ~wx11mj/sounds/KDE_Beep_Beep.wav" 2> /dev/null
 				# ssh ${WS_USER}@${MMI} "/usr/bin/afplay /Users/ylin/sounds/boing.au" 2> /dev/null
                                 # if this is the initial run, do not send email
+                          if [ $sendmail = 'Y' ] 
+                          then
                             if [ $initrun = 'YES' ]
                             then
                               initrun=NO
                             else
                               egrep -i abort ${RECENT_ACTIVITY} | grep reason | awk '{print $4}' | mail Ying.Lin@noaa.gov
                             fi
-                            echo -en "\007"
+                          fi
+                          # boing!  
+                          echo -en "\007"
 			fi
 		fi
 		# ----------------------------

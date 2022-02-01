@@ -7,7 +7,7 @@ then
   exit 1
 else
   arg1=$1
-  sendmail=YES
+  SENDMAIL=YES
   if [ $# -gt 1 ]
   then
     arg2=$2

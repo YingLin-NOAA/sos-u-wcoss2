@@ -1,0 +1,5 @@
+These work now on wcoss2/dogwood:
+  ecflog_summary.sh
+  kill_xterms.sh
+  ring_bell.sh
+  xterms.sh

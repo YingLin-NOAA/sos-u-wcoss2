@@ -1,5 +1,5 @@
 #!/bin/sh
-VERSION=20210616
+VERSION=20220210
 
   #=======================================================================#
   #                                                                       #
@@ -19,10 +19,10 @@ VERSION=20210616
   #  Usage:                                                               #
   #    Arg1: name of ecflow server, or a 2-character code for one of      # 
   #      the four ecf servers below:                                      #
-  #         m1 - mecflow1                                                 #
-  #         m2 - mecflow2                                                 #
-  #         v1 - vecflow1                                                 #
-  #         v1 - vecflow2                                                 # 
+  #         c1 - decflow01                                                 #
+  #         c2 - decflow02                                                 #
+  #         d1 - decflow01                                                 #
+  #         d2 - decflow02                                                 #
   #      if no argument is present, the (current) ecflow server name is   #
   #        extracted from /ecf/rundir/switch_ecflow.log                   #
   #    Arg2 (optional): N (days prior to today)                           #
@@ -46,21 +46,23 @@ VERSION=20210616
 #
 if [ $# -eq 0 ]
 then
-  ecfserver=`tail -1 /ecf/rundir/switch_ecflow.log | awk '{print $5}'`
-  shortecfname=${ecfserver:0:1}${ecfserver: -1}
+  echo 'Needs at least one argument, e.g. decflow01 or d1'
+  exit
+  #ecfserver=`tail -1 /ecf/rundir/switch_ecflow.log | awk '{print $5}'`
+  #shortecfname=${ecfserver:0:1}${ecfserver: -1}
 else
   arg1=$1
-  echo $arg1 | grep ecflow
+  echo $arg1 | grep ecflow0
   err=$?
   if [ $err -eq 0 ]; then 
     ecfserver=$arg1
     shortecfname=${ecfserver:0:1}${ecfserver: -1}
-  elif [ $arg1 = m1 -o $arg1 = m2 -o $arg1 = v1 -o $arg1 = v2 ]; then
+  elif [ $arg1 = c1 -o $arg1 = c2 -o $arg1 = d1 -o $arg1 = d2 ]; then
     shortecfname=$arg1
     p1=${arg1:0:1}
     s1=${arg1: -1}
     echo 'p1, s1=', $p1, $s1
-    ecfserver=${p1}ecflow${s1}
+    ecfserver=${p1}ecflow0${s1}
   else
     echo Unrecognized ecFlow server name or abbreviation \"${arg1}\".  EXIT.
     exit
@@ -74,7 +76,7 @@ else
   nback=$2
 fi
 
-LOGDIR=/ecf/rundir
+LOGDIR=/lfs/h1/ops/prod/output/ecflow
 if [ $nback -eq 0 ]
 then
   ECFLOG=$LOGDIR/ecf.$ecfserver.log
@@ -83,7 +85,7 @@ else
 fi
 day=`date +%Y%m%d -d "$nback days ago"`
 
-outdir=/gpfs/dell1/ptmp/$USER
+outdir=/lfs/h1/nco/ptmp/$USER
 if [ ! -d $outdir ]
 then
    mkdir -p $outdir
@@ -99,7 +101,7 @@ fi
 # Display message if we're just getting started
 #----------------------------------------------
 
-egrep -v 'MSG.*MSG|-alter change label|:ecfprod|:nwprod' $ECFLOG | \
+egrep -v 'MSG.*MSG|-alter change label|:ops.prod' $ECFLOG | \
   egrep \
   'aborted.*reason|-alter|-force|-kill|-requeue|-resume|-run|-suspend|submit_file' \
   >> $sumfile

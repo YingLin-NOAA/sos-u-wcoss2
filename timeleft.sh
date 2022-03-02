@@ -6,5 +6,5 @@ then
 else
   jobid=$1
 fi
-bjobs -o TIME_LEFT $jobid
+qstat -f $jobid | grep walltime
 

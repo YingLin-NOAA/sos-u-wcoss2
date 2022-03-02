@@ -29,7 +29,8 @@
 # 
 
 # Special procedures are downloaded daily (cron'd wget):
-SPC_PRC=/gpfs/dell1/ptmp/$USER/Special_Procedures
+# Add this for wcoss2 later.
+# SPC_PRC=/gpfs/dell1/ptmp/$USER/Special_Procedures
 
 suffix=`date +%Y%m%d_%H%MZ`
 
@@ -148,7 +149,7 @@ else
     # but the lines are very long, so print out just the last column:
     grep \@intra ${output_file} | awk '{ print $NF }' 
   # Is there an entry in the Special Procedures for $model?
-  grep -i "\ $model" ${SPC_PRC} > /dev/null
+  # grep -i "\ $model" ${SPC_PRC} > /dev/null
   err=$?
   if [ $err -eq 0 ]; then
     echo 
@@ -188,22 +189,12 @@ else
     fi
   fi 
 
-  odisk=`echo $output_file | cut -c 7-9`
-  if [ $odisk = del ]
-  then
-    dest="/gpfs/dell3/ptmp/nwprod"
-  elif [ $odisk = hps ]
-  then
-    dest="/gpfs/hps3/ptmp/nwprod"
-  else
-    echo *.o file is not on /gpfs/dell1/ or /gpfs/hps/. Exit w/o saving wrkdir.
-    exit
-  fi 
+  dest="/lfs/h1/nco/ptmp/ops.prod"
   echo "extracting data directory from ${output_file}"
   
   filename=`basename ${data_dir}`
   echo "sudo -u nwprod cp -rp ${data_dir} ${dest}/${filename}_${suffix}"
-  sudo -u nwprod cp -rp ${data_dir} ${dest}/${filename}_${suffix}
+  sudo -u ops.prod cp -rp ${data_dir} ${dest}/${filename}_${suffix}
 
 fi
 

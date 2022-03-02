@@ -8,5 +8,5 @@ then
 else
   jobid=$1
 fi
-watch --interval 60 bjobs -o TIME_LEFT $jobid
+watch --interval 60 "qstat -f $jobid | grep walltime"
 

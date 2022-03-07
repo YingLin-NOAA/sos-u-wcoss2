@@ -132,9 +132,8 @@ else
     -e 'unexplained error' \
     -e 'Unsupported option' \
     -e 'User defined signal' \
+    -e walltime \
     -e WARN4 \
-    -e 'Max Memory' \
-    -e 'Total Requested Memory' \
     -e 'your password' \
     ${output_file} | sort -u | grep -v ' + eval ' | grep -v 'LIBRARY_PATH' | grep -v 'grep ' | grep -v 'ERROR 0' | grep -v 'ERROR \$'
   

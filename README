@@ -1,5 +1,8 @@
 These work now on wcoss2/dogwood:
+  chk_failure.sh
   ecflog_summary.sh
   kill_xterms.sh
   ring_bell.sh
+  timeleft.sh
+  timeleft_watch.sh
   xterms.sh

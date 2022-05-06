@@ -101,7 +101,7 @@ fi
 # Display message if we're just getting started
 #----------------------------------------------
 
-egrep -v 'MSG.*MSG|-alter change label|:ops.prod|Fabric Health' $ECFLOG | \
+egrep -v 'MSG.*MSG|-alter change label|:ops.prod|fabric_health' $ECFLOG | \
   egrep \
   'aborted.*reason|-alter|-force|-kill|-requeue|-resume|-run|-suspend|submit_file' \
   >> $sumfile

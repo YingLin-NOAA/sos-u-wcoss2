@@ -7,8 +7,8 @@ VERSION="20220111"
 # No RTDB pop-up for now
 
 #   No argument: 
-#     2 LightCyan1 for prod
-#     0 Cornsilk1 for Dev 
+#     4 LightCyan1 for prod
+#     1 Cornsilk1 for Dev 
 #   1 argument (n1): n1 xterms
 #   2 argument (n1, n2): n1/n2 xterms
 # RTDB: no special provision for restarting it in this script since it is easy
@@ -27,7 +27,7 @@ X_FT="'Monospace' -fs 14"
 if [ $# -eq 0 ]
 then 
   n1=4
-  n2=0
+  n2=1
   rtdb=N
 elif [ $# -eq 1 ]
 then

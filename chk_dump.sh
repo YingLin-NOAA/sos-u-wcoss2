@@ -20,7 +20,7 @@ else
   output_file=$1
 fi
 
-stmpdir=/gpfs/dell1/stmp/$USER
+stmpdir=/lfs/h1/nco/stmp/$USER
 if [ ! -d $stmpdir ]
 then
   mkdir -p $stmpdir

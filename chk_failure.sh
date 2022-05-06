@@ -132,11 +132,16 @@ else
     -e 'unexplained error' \
     -e 'Unsupported option' \
     -e 'User defined signal' \
-    -e walltime \
     -e WARN4 \
     -e 'your password' \
     ${output_file} | sort -u | grep -v ' + eval ' | grep -v 'LIBRARY_PATH' | grep -v 'grep ' | grep -v 'ERROR 0' | grep -v 'ERROR \$'
   
+  # check for walltime used:
+    grep '\.walltime' ${output_file}
+  # did the job complete successfully?  As of 2022/05/04, wcoss2 work flow does
+  # not have an equivalent of wcoss1 ecf's "Successfully completed".
+    grep 'ecflow_client --complete' ${output_file}
+  # 
   # The grep -v 'eval ATP_HOME=' is to filter out the excessively long line
   #   from cray output:
   #   e.g. rap_postsnd_15:       ++1 + eval AR=ar ';export' 'AR;ARFLAGS=rv' ';export' ....

@@ -1,5 +1,5 @@
 #!/bin/sh
-PTMP=/gpfs/hps3/ptmp/Ying.Lin
+PTMP=/lfs/h1/nco/ptmp/Ying.Lin
 if [ ! -d $PTMP ] 
 then 
   mkdir -p $PTMP
@@ -9,12 +9,17 @@ out1=$PTMP/chkhur.out1
 out2=$PTMP/chkhur.out2
 rm -f $out1 $out2
 
-cd  /gpfs/hps/nco/ops/com/hur/prod/inphwrf;pwd;    cat   nstorms  storms.all;  echo "HWRF: # of storms `cat nstorms`  stormdate : `cat stormdate` " > $out1;  ls -l stormdate
+# 2022/05/06: there doesn't seem to be a wcoss2 equiv of 
+#  /gpfs/dell1/nco/ops/nwprod/versions for now.
+HUR=/lfs/h1/ops/prod/com/hwrf/v13.2
+NHC=/lfs/h1/ops/prod/com/nhcg/v3.3/storm-data/ncep
+GFS=/lfs/h1/ops/prod/com/gfs/v16.2/syndat
+cd  $HUR/inphwrf;pwd;    cat   nstorms  storms.all;  echo "HWRF: # of storms `cat nstorms`  stormdate : `cat stormdate` " > $out1;  ls -l stormdate
 if [ -s storms.all ]
 then 
   cat storms.all | cut -c 1-18 >> $out1
 fi
-cd  /gpfs/hps/nco/ops/com/hur/prod/inpdata;pwd;    cat   nstorms  storms.all;  echo "HMON: # of storms `cat nstorms`  stormdate : `cat stormdate` " > $out2;  ls -l stormdate 
+cd  $HUR/inpdata;pwd;    cat   nstorms  storms.all;  echo "HMON: # of storms `cat nstorms`  stormdate : `cat stormdate` " > $out2;  ls -l stormdate 
 echo ""
 if [ -s storms.all ]
 then 
@@ -23,11 +28,11 @@ fi
 cat $out1 $out2
 
 # also print out the first 33 chars of 
-# /gpfs/dell2/nhc/save/guidance/storm-data/ncep/tcvitals
+# $NHC/tcvitals
 # for comparison:
 echo 
-echo Unique storm names from /gpfs/dell2/nhc/save/guidance/storm-data/ncep/tcvitals:
-cat /gpfs/dell2/nhc/save/guidance/storm-data/ncep/tcvitals | cut -c 1-33 | sort -u
+echo Unique storm names from $NHC/tcvitals:
+cat $NHC/tcvitals | cut -c 1-33 | sort -u
 
 # Earlier on I planned on writing out unique storm names for the $day, $cyc
 # from /gpfs/dell1/nco/ops/com/gfs/prod/syndat/syndat_tcvitals.$yyyy 
@@ -40,7 +45,7 @@ yyyy=20`cat stormdate | cut -c 1-2`
 yyyymmdd=${yyyy}`cat stormdate | cut -c 3-6`
 hh=`cat stormdate | cut -c 7-8`
 echo
-echo Unique storm names from /gpfs/dell1/nco/ops/com/gfs/prod/syndat/syndat_tcvitals.${yyyy}:
-grep " $yyyymmdd ${hh}00" /gpfs/dell1/nco/ops/com/gfs/prod/syndat/syndat_tcvitals.$yyyy | cut -c 1-33 | sort -u 
+echo Unique storm names from $GFS/syndat_tcvitals.${yyyy}:
+grep " $yyyymmdd ${hh}00" $GFS/syndat_tcvitals.$yyyy | cut -c 1-33 | sort -u 
 
 exit

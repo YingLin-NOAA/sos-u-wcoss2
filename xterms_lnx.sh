@@ -29,7 +29,7 @@ X_FT="'Monospace' -fs 11"
 if [ $# -eq 0 ]
 then 
   n1=4
-  n2=0
+  n2=1
   rtdb=N
 elif [ $# -eq 1 ]
 then

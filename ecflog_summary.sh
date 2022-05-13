@@ -19,12 +19,14 @@ VERSION=20220210
   #  Usage:                                                               #
   #    Arg1: name of ecflow server, or a 2-character code for one of      # 
   #      the four ecf servers below:                                      #
-  #         c1 - decflow01                                                 #
-  #         c2 - decflow02                                                 #
-  #         d1 - decflow01                                                 #
-  #         d2 - decflow02                                                 #
-  #      if no argument is present, the (current) ecflow server name is   #
-  #        extracted from /ecf/rundir/switch_ecflow.log                   #
+  #         c1 - cecflow01                                                #
+  #         c2 - cecflow02                                                #
+  #         d1 - decflow01                                                #
+  #         d2 - decflow02                                                #
+  #      On wcoss1, if no argument is present, the (current) ecflow       #
+  #        server name is extracted from /ecf/rundir/switch_ecflow.log    #
+  #        wcoss2 doesn't yet have active ecflow server info on login     #
+  #        nodes yet, so it needs to be specified in Arg1                 # 
   #    Arg2 (optional): N (days prior to today)                           #
   #                                                                       #
   #  Example:                                                             #
@@ -35,6 +37,7 @@ VERSION=20220210
   #  Revison History                                                      #
   #    21 Apr 2021 - created, from a simplified version of                #
   #      mecfl_home_yl.sh and my chk_man_activity.sh                      #
+  #    10 Feb 2022 - adapted to work on dogwood 
   #                                                                       #
   #=======================================================================#
 

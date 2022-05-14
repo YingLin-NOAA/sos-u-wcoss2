@@ -1,0 +1,32 @@
+#!/bin/sh
+# search log in /lfs/h1/ops/prod/output/[$day/, $daym1/] for a given job id
+#
+if [ $# -lt 1 ]
+then
+  echo Needs job id or job name as argument
+  exit 
+else
+  arg1=$1
+fi
+
+logdir=/lfs/h1/ops/prod/output
+today=`date +"%Y%m%d"`
+yesterday=`date -d "1 day ago" +"%Y%m%d"`
+
+# determine whether arg1 is job id (number only) or job name:
+re='^[0-9]+$'
+if [[ $arg1 =~ $re ]]
+then
+  echo $arg1 is a job ID
+  ls -l $logdir/$today/*.o${arg1} \
+        $logdir/$yesterday/*.o${arg1}
+else
+  echo $arg1 is a job name
+  ls -l $logdir/$today/*${arg1}*.o*
+  ls -l $logdir/$yesterday/*${arg1}*.o*
+fi
+
+exit
+
+
+ 

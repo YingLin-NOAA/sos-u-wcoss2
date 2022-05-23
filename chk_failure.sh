@@ -197,7 +197,7 @@ else
   echo "extracting data directory from ${output_file}"
   
   filename=`basename ${data_dir}`
-  echo "sudo -u nwprod cp -rp ${data_dir} ${dest}/${filename}_${suffix}"
+  echo "sudo -u ops.prod cp -rp ${data_dir} ${dest}/${filename}_${suffix}"
   sudo -u ops.prod cp -rp ${data_dir} ${dest}/${filename}_${suffix}
 
 fi

@@ -1,5 +1,5 @@
 #!/bin/sh
-PTMP=/lfs/h1/nco/ptmp/Ying.Lin
+PTMP=/lfs/h1/nco/ptmp/$USER
 if [ ! -d $PTMP ] 
 then 
   mkdir -p $PTMP

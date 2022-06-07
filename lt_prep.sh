@@ -27,7 +27,7 @@ case ${CUT_USER} in
         "Patrick." ) WS_USER="wx11po" ;;
         "Rebecca." ) WS_USER="wx11rc" ;;
         "Keith.Li" ) WS_USER="kliddick" ;;
-        "Ying.Lin" ) WS_USER="wx11yl" ;;
+        "ying.lin" ) WS_USER="wx11yl" ;;
                  * ) AUDIO="NO" ;;
 esac
 export USER WS_USER

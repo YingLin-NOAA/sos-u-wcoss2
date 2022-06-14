@@ -51,6 +51,11 @@ else
   err=$?
   if [ $err -eq 0 ]; then exit; fi
 
+  # Also check for hardware failure (no route to host), skip the rest if found:
+  grep -i 'no route to host' $output_file
+  err=$?
+  if [ $err -eq 0 ]; then exit; fi
+
   # if the job output file contains hyspt_canned_post, and the error message
   # is "HYSPLIT output DID NOT mirror successfully to", print out the lines
   # containing this err msg.
@@ -111,7 +116,6 @@ else
     -e killed \
     -e missing \
     -e 'MPI_Abort' \
-    -e 'no route to host' \
     -e 'no such file or directory' \
     -e 'No GEMPAK parameter name defined for this grid' \
     -e 'Permission denied' \

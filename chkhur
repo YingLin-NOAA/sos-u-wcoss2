@@ -27,13 +27,6 @@ then
 fi
 cat $out1 $out2
 
-# also print out the first 33 chars of 
-# $NHC/tcvitals
-# for comparison:
-echo 
-echo Unique storm names from $NHC/tcvitals:
-cat $NHC/tcvitals | cut -c 1-33 | sort -u
-
 # Earlier on I planned on writing out unique storm names for the $day, $cyc
 # from /gpfs/dell1/nco/ops/com/gfs/prod/syndat/syndat_tcvitals.$yyyy 
 # since Holly was referring to that file on 9/07. 

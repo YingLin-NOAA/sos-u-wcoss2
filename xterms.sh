@@ -26,9 +26,10 @@ X_FT="'Monospace' -fs 14"
 
 if [ $# -eq 0 ]
 then 
-  n1=4
+  n1=5
   n2=1
-  rtdb=N
+  rtdb=Y
+  clock=Y
 elif [ $# -eq 1 ]
 then
   n1=$1
@@ -63,4 +64,9 @@ done
 if [ $rtdb = 'Y' ]
 then
   ~/sos/rtdb.sh
+fi
+
+if [ $clock = 'Y' ]
+then
+  ~/sos/run_clock.sh
 fi

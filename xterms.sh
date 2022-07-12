@@ -4,7 +4,6 @@ VERSION="20220111"
 
 # This script is a greatly simplified version of lt.sh.  It 
 # pops up a number of xterms. It takes 0, 1, or 2 arguments
-# No RTDB pop-up for now
 
 #   No argument: 
 #     4 LightCyan1 for prod
@@ -35,11 +34,13 @@ then
   n1=$1
   n2=0
   rtdb=N
+  clock=N
 elif [ $# -eq 2 ]
 then
   n1=$1
   n2=$2
   rtdb=N
+  clock=N
 else
   print "Number of arguments need to be 0, 1, or 2"
   exit

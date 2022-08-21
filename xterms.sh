@@ -8,7 +8,7 @@ VERSION="20220111"
 #   No argument: 
 #     5 LightCyan1 for prod
 #     1 Cornsilk1 for Dev 
-#     1 Seashell (beige) for edit text files (ng) while on loaner win GFE
+#     1 light gray for edit text files (ng) while on loaner win GFE
 #   1 argument (n1): n1 xterms
 #   3 argument (n1, n2, n3): n1/n2/n3 xterms
 # RTDB: no special provision for restarting it in this script since it is easy
@@ -22,7 +22,7 @@ VERSION="20220111"
 #----------
 X_BG1="LightCyan1"
 X_BG2="Cornsilk1"
-X_BG3="Seashell"
+X_BG3="Grey89"
 X_FT="'Monospace' -fs 14" 
 
 if [ $# -eq 0 ]

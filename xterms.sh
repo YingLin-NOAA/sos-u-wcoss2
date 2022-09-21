@@ -72,11 +72,12 @@ do
   let n=n+1
 done
 
+# 3rd type of terminal is for notes editing, no need when using non-loaner GFE:
 n=1
 while [ $n -le $n3 ]
 do 
-  nohup  xterm -sl 5000 -sb  -bg ${X_BG3} -fa ${X_FT} &
-  sleep 1
+#  nohup  xterm -sl 5000 -sb  -bg ${X_BG3} -fa ${X_FT} &
+#  sleep 1
   let n=n+1
 done
 

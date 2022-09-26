@@ -6,4 +6,4 @@
 #
 #  sort -k: sort via a key ('-k1' - first column; 'k2' would have sorted by
 #    s2a value) 
-cat /lfs/h1/ops/prod/com/logs/runtime/prod/daily/"$(date +"%Y%m%d")".daily | awk '$6>100 {print $3, $6, $1}'  | sort -k1
+cat /lfs/h1/ops/prod/com/logs/runtime/prod/daily/$(date +"%Y%m%d").daily | awk '$6>100 {print $3, $6, $1}'  | sort -k1

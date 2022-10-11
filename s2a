@@ -1,5 +1,5 @@
 # From SPA Greg Mott, 2022/08/24
-# The output fiels are:
+# The output fields are:
 #  Col 1: hh:mm when job became active ($3)
 #  Col 2: s2a time (s) ($6)
 #  Col 3: job name ($1)

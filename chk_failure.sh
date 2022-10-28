@@ -52,9 +52,13 @@ else
   if [ $err -eq 0 ]; then exit; fi
 
   # Also check for hardware failure (no route to host), skip the rest if found:
-  grep -i 'no route to host' $output_file
-  err=$?
-  if [ $err -eq 0 ]; then exit; fi
+  grep -i 'no route to host' $output_file | sort -u
+  err=${PIPESTATUS[0]}
+  if [ $err -eq 0 ] 
+  then 
+    grep -i 'killing job' $output_file
+    exit
+  fi
 
   # if the job output file contains hyspt_canned_post, and the error message
   # is "HYSPLIT output DID NOT mirror successfully to", print out the lines
@@ -114,6 +118,7 @@ else
     -e 'io timeout' \
     -e 'IOError' \
     -e killed \
+    -e 'killing job' \
     -e missing \
     -e 'MPI_Abort' \
     -e 'no such file or directory' \
@@ -134,6 +139,7 @@ else
     -e SIGSEGV \
     -e 'unable to set' \
     -e 'unexplained error' \
+    -e 'unphysical' \
     -e 'Unsupported option' \
     -e 'User defined signal' \
     -e WARN4 \

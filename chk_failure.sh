@@ -95,6 +95,7 @@ else
     -e 'broken pipe' \
     -e 'BUFR ARCHIVE LIBRARY ABORT' \
     -e 'claim exceeds' \
+    -e 'command timeout' \
     -e 'connection timed out' \
     -e 'core dump' \
     -e 'could not find' \
@@ -132,6 +133,7 @@ else
     -e 'Segmentation fault' \
     -e 'selecetfile cannot id filetype' \
     -e 'Send alert message to' \
+    -e 'sending SIGTERM to' \
     -e Sev1 \
     -e severe \
     -e 'target_IP=' \

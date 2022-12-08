@@ -13,18 +13,34 @@ rm -f $out1 $out2
 #  /gpfs/dell1/nco/ops/nwprod/versions for now.
 HUR=/lfs/h1/ops/prod/com/hwrf/v13.2
 NHC=/lfs/h1/ops/prod/com/nhcg/v3.3/storm-data/ncep
-GFS=/lfs/h1/ops/prod/com/gfs/v16.2/syndat
-cd  $HUR/inphwrf;pwd;    cat   nstorms  storms.all;  echo "HWRF: # of storms `cat nstorms`  stormdate : `cat stormdate` " > $out1;  ls -l stormdate
-if [ -s storms.all ]
-then 
-  cat storms.all | cut -c 1-18 >> $out1
+GFS=/lfs/h1/ops/prod/com/gfs/v16.3/syndat
+
+cd  $HUR/inphwrf
+err=$?
+if [ $err -eq 0 ]; then
+  pwd;    cat   nstorms  storms.all;  echo "HWRF: # of storms `cat nstorms`  stormdate : `cat stormdate` " > $out1;  ls -l stormdate
+  if [ -s storms.all ]
+  then 
+    cat storms.all | cut -c 1-18 >> $out1
+  fi
+else
+  echo Err cd $HUR/inphwrf
 fi
-cd  $HUR/inpdata;pwd;    cat   nstorms  storms.all;  echo "HMON: # of storms `cat nstorms`  stormdate : `cat stormdate` " > $out2;  ls -l stormdate 
+
 echo ""
-if [ -s storms.all ]
-then 
-  cat storms.all | cut -c 1-18 >> $out2
-fi
+
+cd  $HUR/inphmon
+err=$?
+if [ $err -eq 0 ]; then
+  pwd;    cat   nstorms  storms.all;  echo "HMON: # of storms `cat nstorms`  stormdate : `cat stormdate` " > $out2;  ls -l stormdate 
+  if [ -s storms.all ]
+  then 
+    cat storms.all | cut -c 1-18 >> $out2
+  fi
+else
+  echo Err cd $HUR/inphmon
+fi 
+
 cat $out1 $out2
 
 # Earlier on I planned on writing out unique storm names for the $day, $cyc

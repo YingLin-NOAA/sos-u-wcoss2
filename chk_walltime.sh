@@ -10,7 +10,10 @@ else
   output_file=$1
 
   # check for walltime used:
-    grep '\.walltime' ${output_file}
+    grep -a '\.walltime' ${output_file}
+
+  # print the first and last match of UTC - start/ending time of job:
+    grep -a UTC ${output_file} | sed -n '1p;$p' 
 fi
 
 exit

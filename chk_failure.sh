@@ -32,6 +32,10 @@
 # Add this for wcoss2 later.
 # SPC_PRC=/gpfs/dell1/ptmp/$USER/Special_Procedures
 
+# use 'grep -a' in case job log contains binary character(s): looking at you,
+#   petss_postprob!  (Jan 2023)
+alias grep='grep -a'
+
 suffix=`date +%Y%m%d_%H%MZ`
 
 if [ $# -eq 0 ]; then

@@ -1,0 +1,29 @@
+#!/bin/sh
+# based on Steven's email to nco.sos, 2022/01/06
+#
+# Here's the python script:
+#   /apps/ops/prod/nco/core/ecflow.v5.6.0.13/scripts/node_status_and_rid.py 
+# 
+# The .../config/active.ecflow appears to be created by the jrun_ecflow_switch
+#   job.  On 2022/09/21 i saw that it did not have the current active ecflow
+#   server - earlier that morning (overnight/utc) there was an emergency prod
+#   switch; SPA confirmed that was the cause and they might need to change
+#   that in the future.  Not sure if we're in this future state yet.  So 
+#   this script prints out the value of the .../config/active.ecflow.  If you
+#   see that this is not the actual active ecflow server, rerun this script
+#   with the active ecflow server (e.g. decflow02) as argument.  
+
+if [ $# -eq 0 ]
+then
+  configdir=/lfs/h1/ops/prod/config
+  export ECF_HOST=`cat $configdir/active.ecflow`
+  echo $configdir/active.ecflow = $ECF_HOST
+else
+  export ECF_HOST=$1
+fi
+         
+module load ecflow intel python/3.8.6
+# 31415 is port for prod; 14142 is para
+ECF_PORT=31415 
+node_status_and_rid.py | grep aborted | column -t
+

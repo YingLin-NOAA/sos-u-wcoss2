@@ -1,0 +1,3 @@
+These scripts worked on wcoss1 but not on wcoss2:
+  chk_rzdm.sh: ping to e.g. vm-lnx-rzdm02.ncep.noaa.gov cannot get through
+    (2023/01/13)

@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# based on Fred's ~/bin/cn
+# to use: chknode <job log>
+
+# Expand the nodelist from the job log - some are in ranges such as
+#  '001279-001281' - into individual nodes, then grep each node from the 
+#   output of 'pbsnodes -l', which lists problematic nodes
+
+wrkdir=/lfs/h1/nco/stmp/$USER
+if [ ! -d $wrkdir ]
+then
+  mkdir $wrkdir
+fi
+badlist=$wrkdir/pbsnodes.badlist
+nodelist=$wrkdir/pbsnodes.nodelist
+
+grep nodelist $1 | head -1 | tee $wrkdir/nodelist
+ 
+m=`cat $wrkdir/nodelist | awk '{print $4}' | cut -c 4- | tr -d '[]' | sed -e 's/,/ /g'`
+
+echo 
+
+pbsnodes -l > $badlist
+
+for nodes in $m; do
+	#if there are node ranges like 001000-001004
+	if echo $nodes | grep -q "-" ; then
+		start=`echo $nodes | awk -F '-' '{print $1}'`
+		finish=`echo $nodes | awk -F '-' '{print $2}'`
+		for node in `seq -w $start $finish`; do
+                        grep nid$node $badlist
+		done
+	#no dashes, just single node - in this case the var is 'nodes':
+	else
+                        grep nid$nodes $badlist
+	fi
+done

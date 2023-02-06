@@ -1,0 +1,9 @@
+#!/bin/sh
+
+cd /lfs/h1/ops/prod/dcom/20230131/wgrbbul/cmcens_gb2
+for file in `ls 2023013100_CMC_naefs_hr_latlon0p5x0p5_P*_*.grib2`
+do
+  echo $file
+  wgrib2 $file > /dev/null
+done
+

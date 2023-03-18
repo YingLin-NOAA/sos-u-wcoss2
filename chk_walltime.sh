@@ -30,7 +30,13 @@ else
   # print the first and last match of UTC - start/ending time of job:
   #  grep -a UTC ${output_file} | sed -n '1p;$p'
 
-  grep stime ${output_file} | tee stime.out
+# we want to get stime/mtime from lines like this:
+#     stime = Sat Mar 18 00:49:23 2023
+# not like this (in hrrr_forecast output):
+# Application 092c4bbc-fcc5-4822-89f9-f67a3f390377 resources: utime=14727839s stime=376528s maxrss=1724088KB ...
+# Annoyingly /lfs/h1/ops/prod/output/20230316/hrrr_forecast_conus_00.o58071394
+#   also contains binary characters, so use 'grep -a' instead of grep.
+  grep -a '   stime = ' ${output_file} | tee stime.out
   if [ -s stime.out ]; then
     # use sed to remove leading blank space from string:
     stime=`awk -F"=" '{print $2}' stime.out | sed 's/^ *//g'`
@@ -38,7 +44,7 @@ else
     stime=' '
   fi 
 
-  grep mtime ${output_file} | tee mtime.out
+  grep -a '   mtime = ' ${output_file} | tee mtime.out
   if [ -s mtime.out ]; then
     mtime=`awk -F"=" '{print $2}' mtime.out | sed 's/^ *//g'`
   else

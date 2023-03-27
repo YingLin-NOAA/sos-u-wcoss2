@@ -124,6 +124,7 @@ else
     -e 'IOError' \
     -e killed \
     -e 'killing job' \
+    -e 'launch RPC: Couldn' \
     -e missing \
     -e 'MPI_Abort' \
     -e 'no such file or directory' \
@@ -132,6 +133,7 @@ else
     -e 'PROBLEM ARCHIVING' \
     -e 'RC=[1-999]' \
     -e 'refusing to create empty archive' \
+    -e 'Resource temporarily unavailable' \
     -e 'rsync error' \
     -e 'SegFault' \
     -e 'Segmentation fault' \

@@ -73,13 +73,13 @@ def findtime(line):
   ----:----|----:----|---
   """
   time_fmt_str='%H:%M:%S %d.%m.%Y'
-  ecftime=datetime.strptime(line[5:22],time_fmt_str)
+  ecftime=datetime.strptime(line[5:23],time_fmt_str)
   return ecftime
 
 first = True
 for i in range(len(whole_log)):
   line=whole_log[i]
-  if line[0:5] == 'LOG:[' and line[22] == ']': 
+  if line[0:5] == 'LOG:[' and line[23] == ']': 
     time=findtime(whole_log[i])
     if not first:
       gap=time-prevtime

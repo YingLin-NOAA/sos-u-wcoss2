@@ -8,12 +8,30 @@ then
 else
   arg1=$1
   SENDMAIL=YES
+  LINUX=NO
   if [ $# -gt 1 ]
   then
     arg2=$2
     if [[ $arg2 = nomail || $arg2 = noemail ]]
     then
       SENDMAIL=NO
+    elif [[ $arg2 = sos1 || $arg2 = sos2 || $arg2 = sos3 ]]
+    then
+      LINUX=YES
+      sosn=$2
+    fi 
+  fi
+
+  if [ $# -gt 2 ]
+  then
+    arg3=$3
+    if [[ $arg3 = nomail || $arg3 = noemail ]]
+    then
+      SENDMAIL=NO
+    elif [[ $arg3 = sos1 || $arg3 = sos2 || $arg3 = sos3 ]]
+    then
+      LINUX=YES
+      sosn=$3
     fi 
   fi
 fi
@@ -32,6 +50,11 @@ print "#==================================================================#"
 #                                                                  #
 #  Revison History                                                 #
 #  ---------------                                                 #
+#   3 Apr 2023: ssh from wcoss2 to lw-sos1/sos2/sos3 now works     #
+#    (due to RHEL8 upgrade on the lw-sos*?).  Make the 'boing'     #
+#    sound if the 2nd or 3rd argument of this script is            #
+#    sos1||sos2||sos3. 
+# 
 #  12 Jan 2022: updated for wcoss2
 #    abbreviations are d1/d2/c1/c2
 #    this script is in ksh because 'print' is a korn shell command
@@ -276,8 +299,15 @@ do
 
       if [ "$AUDIO" = "YES" ]
       then
+        if [ $LINUX = YES ]
+        then
+          # use 'ssh -q' to quiet the 'log in' message upon connecting to sos*
+          # use 'aplay -q' so it doesn't print out "Playing Sparc Audio '/usr1/wx11yl/sounds/boing.au' : Mu-Law, Rate 8000 Hz, Mono"
+          ssh -q wx11yl@nco-lw-${sosn} "/usr/bin/aplay -q ~wx11yl/sounds/boing.au"
+        else
           # BEEP repeated 3 times: 
           echo -en "\007 \007 \007"
+        fi
       fi
       # ----------------------------
       # Reset new line "dot" counter

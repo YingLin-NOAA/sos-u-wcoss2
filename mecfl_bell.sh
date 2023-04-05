@@ -1,9 +1,14 @@
 #!/bin/ksh
-VERSION=20220112
+VERSION=20230405
 
 if [ $# -lt 1 ]
 then
   echo "$0 Usage: arg1 = machine to monitor (full name or abbreviation)"
+  echo "Optional arg2/3: nomail (skip sending email to ${USER}.noaa.gov)"
+  echo "Optional arg2/3: [sos1,sos2,sos3]: if working on site using one of the"
+  echo "  linux machines, run with this argument for a 'Boing' alert when"
+  echo "  there is a job failure."
+  echo "arg2/3 can be in either order."
   exit 1
 else
   arg1=$1

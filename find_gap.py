@@ -1,8 +1,9 @@
 import pandas as pd
 import sys
+import re
 from datetime import datetime, timedelta
 
-# Last update: 2023/03/09
+# Last update: 2023/04/19
 # Find time gap between ecflog LOG entries that are 1min (default) or longer
 # This code has 0-2 arguments:
 #  - No argument: python find_gap.py
@@ -65,22 +66,16 @@ whole_log = file.readlines()
 
 print('Locate time gaps greater than ', delta0, 'between LOG entries in\n', infile, ':')
 
-def findtime(line):
-  """
-  Convert the hh:mm:ss Day.Mon.Year info in a ecflog entry into a datetime
-  object
-  LOG:[23:55:04 27.2.2023]
-  ----:----|----:----|---
-  """
-  time_fmt_str='%H:%M:%S %d.%m.%Y'
-  ecftime=datetime.strptime(line[5:23],time_fmt_str)
-  return ecftime
+time_fmt_str='%H:%M:%S %d.%m.%Y'
 
 first = True
 for i in range(len(whole_log)):
   line=whole_log[i]
-  if line[0:5] == 'LOG:[' and line[23] == ']': 
-    time=findtime(whole_log[i])
+  match=re.search(r'LOG:\[.*?\]',line)
+  if match:
+    tmpstr=match.group()
+    timestr=tmpstr.replace("LOG:[","").replace("]","")
+    time=datetime.strptime(timestr,time_fmt_str)
     if not first:
       gap=time-prevtime
       if gap > maxgap:

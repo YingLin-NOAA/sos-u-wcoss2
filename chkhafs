@@ -1,0 +1,60 @@
+#!/bin/sh
+PTMP=/lfs/h1/nco/ptmp/$USER
+if [ ! -d $PTMP ] 
+then 
+  mkdir -p $PTMP
+fi
+
+out1=$PTMP/chkhur.out1
+out2=$PTMP/chkhur.out2
+rm -f $out1 $out2
+
+# 2022/05/06: there doesn't seem to be a wcoss2 equiv of 
+#  /gpfs/dell1/nco/ops/nwprod/versions for now.
+HUR=/lfs/h1/ops/prod/com/hwrf/v13.2
+NHC=/lfs/h1/ops/prod/com/nhcg/v3.3/storm-data/ncep
+GFS=/lfs/h1/ops/prod/com/gfs/v16.3/syndat
+
+cd  $HUR/inphwrf
+err=$?
+if [ $err -eq 0 ]; then
+  pwd;    cat   nstorms  storms.all;  echo "HWRF: # of storms `cat nstorms`  stormdate : `cat stormdate` " > $out1;  ls -l stormdate
+  if [ -s storms.all ]
+  then 
+    cat storms.all | cut -c 1-18 >> $out1
+  fi
+else
+  echo Err cd $HUR/inphwrf
+fi
+
+echo ""
+
+cd  $HUR/inphmon
+err=$?
+if [ $err -eq 0 ]; then
+  pwd;    cat   nstorms  storms.all;  echo "HMON: # of storms `cat nstorms`  stormdate : `cat stormdate` " > $out2;  ls -l stormdate 
+  if [ -s storms.all ]
+  then 
+    cat storms.all | cut -c 1-18 >> $out2
+  fi
+else
+  echo Err cd $HUR/inphmon
+fi 
+
+cat $out1 $out2
+
+# Earlier on I planned on writing out unique storm names for the $day, $cyc
+# from /gpfs/dell1/nco/ops/com/gfs/prod/syndat/syndat_tcvitals.$yyyy 
+# since Holly was referring to that file on 9/07. 
+# Now print out unique storm names in 
+#   /gpfs/dell1/nco/ops/com/gfs/prod/syndat/syndat_tcvitals.$yyyy 
+# for this cycle:
+# Be sure to change the hardwired '20' below before year 2100
+yyyy=20`cat stormdate | cut -c 1-2`
+yyyymmdd=${yyyy}`cat stormdate | cut -c 3-6`
+hh=`cat stormdate | cut -c 7-8`
+echo
+echo Unique storm names from $GFS/syndat_tcvitals.${yyyy}:
+grep " $yyyymmdd ${hh}00" $GFS/syndat_tcvitals.$yyyy | cut -c 1-33 | sort -u 
+
+exit

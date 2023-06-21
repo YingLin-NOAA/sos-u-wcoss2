@@ -1,0 +1,139 @@
+#!/usr/bin/python3
+
+import urwid
+import datetime
+import os
+import time
+
+def shkey(key):
+	if (key == 'q'):
+		raise urwid.ExitMainLoop()
+	elif (key == 'r'):
+		urloop.set_alarm_in(1, shp1)
+
+def shfile(xloop, xdata):
+	urloop.draw_screen()
+	
+	with open('/u/xinyang.liu/mon/rtdb') as f:
+		for line in f:
+			s=line
+
+	st=s.strip()
+	urrtdbfile.set_text(st)
+	urrtdblabel.set_text(t)
+
+	if (st == 'ok'):
+		urrtdbdisp = urwid.AttrMap(urrtdbfile, 'ok')
+	elif (st == 'warn'):
+		urrtdbdisp = urwid.AttrMap(urrtdbfile, 'warn')
+	elif (st == 'alert'):
+		urrtdbdisp = urwid.AttrMap(urrtdbfile, 'alert')
+	else:
+		urrtdbdisp = urwid.AttrMap(urrtdbfile, 'unk')
+
+	urloop.set_alarm_in(10, shfile)
+
+def shp1(xloop, xdata):
+	urloop.draw_screen()
+	tn=datetime.datetime.now()
+	d=datetime.datetime.today()
+	urlabel[5].set_text("Status as of:")
+	urtime[5].set_text(tn.time().isoformat(timespec='seconds'))
+
+	logs=['transfer_p1_rate.log', 'transfer_hpss_canned_rate.log', 'transfer_hera_rate.log', 'transfer_rzdm_canned_cp_rate.log', 'transfer_rzdm_canned_bldr_rate.log']
+	for i, log in enumerate(logs):
+		
+		nlog='/lfs/h1/ops/prod/com/logs/network_monitor/'+cluster+'/'+d.strftime("%Y%m%d")+'/'+log
+		while os.path.exists(nlog) != True:
+			time.sleep(300)
+
+		with open(nlog) as f:
+		#with open('/u/xinyang.liu/mon/20230614/'+log) as f:
+			for line in f:
+				s=line
+
+		sl=s.strip()
+		[st, et, r, ru, node, tip]=sl.split()
+
+		te=datetime.datetime.strptime(et, "%H:%M:%S")
+		te=te.replace(year=d.year, month=d.month, day=d.day)
+
+		td=(tn-te).total_seconds()
+	
+		urtime[i].set_text(et)
+		urrate[i].set_text(r+" "+ru)
+
+		if (td < 1200):
+			urinfo[i].set_text("on time")
+		elif (urinfo[i].text != "delayed"):
+			urinfo[i].set_text("delayed")
+			print('\a\a\a')
+
+	urloop.set_alarm_in(900, shp1)
+
+def uprtdbinfo(button):
+	mute=1
+
+def refresh(button):
+	urloop.set_alarm_in(1, shp1)
+
+def quitprog(button):
+	raise urwid.ExitMainLoop()
+
+def submenu(button):
+	if urloop.widget == urlayout:
+		urupdate=urwid.Button("Update")
+		urback=urwid.Button("Back")
+		urwid.connect_signal(urupdate, 'click', uprtdbinfo)
+		urwid.connect_signal(urback, 'click', mainlayout)
+		ursubmenu=urwid.Filler(urwid.Pile([urwid.AttrMap(urupdate, None, focus_map='reversed'), urwid.AttrMap(urback, None, focus_map='reversed')]))
+		ursubmenuol=urwid.Overlay(ursubmenu, urlayout, 'center', 20, 'middle', 20)
+		urloop.widget = ursubmenuol
+	else:
+		urloop.widget=urlayout
+
+def mainlayout(button):
+	urloop.widget=urlayout
+
+palette=[('reversed', 'standout', ''), ('ok', '', 'dark green'), ('warn', '', 'brown'), ('alert', '', 'light red'), ('unk', '', 'light blue')]
+urlabel=[urwid.Text("p1"), urwid.Text("HPSS"), urwid.Text("Hera"), urwid.Text("RZDM CP"), urwid.Text("RZDM BLDR"), urwid.Text("-")]
+urtime=[urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-")]
+urrate=[urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-")]
+urinfo=[urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-")]
+
+with open('/etc/cluster_name', encoding="utf-8") as f:
+	cluster=f.read()
+
+cluster=cluster.strip()
+
+urdiv=urwid.Divider()
+
+urrtdbbut=urwid.Button("Test Menu")
+urrbut=urwid.Button("Refresh")
+urqbut=urwid.Button("Quit")
+
+urwid.connect_signal(urrbut, 'click', refresh)
+urwid.connect_signal(urqbut, 'click', quitprog)
+urwid.connect_signal(urrtdbbut, 'click', submenu)
+
+#urp1disp=urwid.AttrMap(urp1file, 'unk')
+#urrtdbdisp=urwid.AttrMap(urrtdbfile, 'unk')
+
+transfer=[]
+for i in range(6):
+	transfer.append(urwid.Columns([urlabel[i], urtime[i], urrate[i], urinfo[i]]))
+
+
+urbanner=urwid.Text("Press q to exit")
+urbuts=urwid.Columns([urwid.AttrMap(urrbut, None, focus_map='reversed'), urwid.AttrMap(urqbut, None, focus_map='reversed')])
+
+#urlayout=urwid.Filler(urwid.Columns([urbuts, urlabels, urdisps, urinfo]), 'top')
+#urlayout=urwid.Filler(urwid.Pile([transfer, urbuts]), 'top')
+urlayout=urwid.Filler(urwid.Pile([transfer[5], urdiv, transfer[0], transfer[1], transfer[2], transfer[3], transfer[4], urdiv, urbuts]), 'top')
+
+
+urloop=urwid.MainLoop(urlayout, palette, unhandled_input=shkey)
+#urloop.set_alarm_in(5, shfile)
+urloop.set_alarm_in(1, shp1)
+
+urloop.run()

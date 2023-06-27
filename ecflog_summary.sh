@@ -106,7 +106,7 @@ fi
 
 egrep -v 'MSG.*MSG|-alter change label|:ops.prod|fabric_health' $ECFLOG | \
   egrep \
-  'aborted.*reason|-alter|-force|-kill|-requeue|-resume|-run|-suspend|submit_file' \
+  'aborted.*reason|-alter|-force|-free-dep|-kill|-requeue|-resume|-run|-suspend|submit_file' \
   >> $sumfile
 
 # Print out $sumfile so alias 'logv' can go directly to view it.  Wait for a second, else 'view +' in logv won't get the latest 

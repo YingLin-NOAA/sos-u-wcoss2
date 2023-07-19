@@ -5,6 +5,11 @@ import datetime
 import os
 import time
 
+#temp fix until walltime on canned jobs makes sense
+#don't look too closely at the functions, some are strictly placeholders
+#should handle cases where there is no file, like during new day
+#refresh doesn't propagate.  If the cycle starts at 0000, runs will still run at 0000, 0015, 0030, etc even if you refresh sometime in the middle like 0007
+
 def shkey(key):
 	if (key == 'q'):
 		raise urwid.ExitMainLoop()
@@ -36,29 +41,34 @@ def shfile(xloop, xdata):
 def shp1(xloop, xdata):
 	urloop.draw_screen()
 	tn=datetime.datetime.now()
+	tnp=tn.time().isoformat(timespec='seconds')
 	d=datetime.datetime.today()
 	urlabel[5].set_text("Status as of:")
-	urtime[5].set_text(tn.time().isoformat(timespec='seconds'))
+	urtime[5].set_text(tnp)
 
 	logs=['transfer_p1_rate.log', 'transfer_hpss_canned_rate.log', 'transfer_hera_rate.log', 'transfer_rzdm_canned_cp_rate.log', 'transfer_rzdm_canned_bldr_rate.log']
 	for i, log in enumerate(logs):
 		
 		nlog='/lfs/h1/ops/prod/com/logs/network_monitor/'+cluster+'/'+d.strftime("%Y%m%d")+'/'+log
-		while os.path.exists(nlog) != True:
-			time.sleep(300)
+		if os.path.exists(nlog) == True:
 
-		with open(nlog) as f:
-		#with open('/u/xinyang.liu/mon/20230614/'+log) as f:
-			for line in f:
-				s=line
+			with open(nlog) as f:
+			#with open('/u/xinyang.liu/mon/20230614/'+log) as f:
+				for line in f:
+					s=line
 
-		sl=s.strip()
-		[st, et, r, ru, node, tip]=sl.split()
+			sl=s.strip()
+			[st, et, r, ru, node, tip]=sl.split()
 
-		te=datetime.datetime.strptime(et, "%H:%M:%S")
-		te=te.replace(year=d.year, month=d.month, day=d.day)
+			te=datetime.datetime.strptime(et, "%H:%M:%S")
+			te=te.replace(year=d.year, month=d.month, day=d.day)
 
-		td=(tn-te).total_seconds()
+			td=(tn-te).total_seconds()
+		else:
+			td = 2000
+			et="00:00:00"
+			r="no"
+			ru="file"
 	
 		urtime[i].set_text(et)
 		urrate[i].set_text(r+" "+ru)

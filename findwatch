@@ -1,0 +1,42 @@
+#!/bin/sh
+# YL: script to quickly get jwatch info as described in 
+#   http://www2.pmb.ncep.noaa.gov/wiki/index.php/JWATCH
+# When there is no argument, search in current active ecflog
+# Optional argument: search in alternative or previous day's logs, e.g.
+#     findwatch ecf.decflow01.log       (i.e. just after an ecf switch)
+# or, findwatch log/ecf.decflow02.log1  (i.e. search in prev day's log)
+# Last updated: 2023/07/25
+
+ecfdir=/lfs/h1/ops/prod/output/ecflow
+if [ $# -eq 0 ] 
+then
+  actvecf=`cat /lfs/h1/ops/prod/config/active.ecflow`
+  ecflog=$ecfdir/ecf.${actvecf}.log
+else
+  ecflog=$ecfdir/$1
+fi
+
+stmp=/lfs/h1/nco/stmp/${USER}
+if [ ! -d $stmp ]
+then
+  mkdir -p $stmp
+fi
+
+echo Search for jwatch output in ${ecflog}:
+
+grep jwatch.*lost $ecflog | tee $stmp/watchout
+
+if [ ${PIPESTATUS[0]} -eq 0 ]
+then
+  cat $stmp/watchout | while read tmp
+  do
+    echo -e '\n'
+    echo ${tmp}
+    joblist=`echo $tmp | awk -F"] " '{ print $2 }'`
+    cat $joblist
+  done
+else
+  echo No lost job found in the above ecf log.
+fi
+
+

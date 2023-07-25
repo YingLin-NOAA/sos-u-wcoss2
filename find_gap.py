@@ -1,25 +1,25 @@
+##!/usr/bin/python3
 import pandas as pd
 import sys
 import re
 from datetime import datetime, timedelta
 
-# Last update: 2023/04/19
+# Last update: 2023/07/25
 # Find time gap between ecflog LOG entries that are 1min (default) or longer
 # This code has 0-2 arguments:
 #  - No argument: python find_gap.py
-#    find gaps in the current active ecflog.  Current active ecflow server
-#    info is from /lfs/h1/ops/prod/config/active.ecflow.
-#  - 1 argument: user-supplied ecflog name (or ecflog name under log/,
-#    which is a subdir under /lfs/h1/ops/prod/output/ecflow/
-#    Example 1:  python find_gap.py ecf.decflow01.log
+#    find gaps greater than 59s in the current active ecflog.  Current active 
+#    ecflow server info is from /lfs/h1/ops/prod/config/active.ecflow.
+#  - 1 argument: user-supplied threshold time gap.  The threshold value needs 
+#      to be in seconds, e.g. 'python find_gap.py 119' will identify time gaps
+#      of at least 2 minutes in the current active ecflog.      
+#  - 2 argument: user-supplied threshold time gap, and ecflog name (or ecflog 
+#    name under log/, which is a subdir under /lfs/h1/ops/prod/output/ecflow/
+#    Example 1:  python find_gap.py 29 ecf.decflow01.log
 #      (if on the day of an ecflow server switch, you want to find earlier gaps
 #       that happened prior to the switch)
-#    Example 2:  python find_gap.py log/ecf.decflow02.log1
+#    Example 2:  python find_gap.py 29 log/ecf.decflow02.log1
 #      (find gaps in previous day's ecflog)
-#  - 2 argument: user supplied ecflog name and threshold time gap (default 
-#      is > 59s.  The threshold value needs to be in seconds, e.g.
-#      python find_gap.py $ecflog_name 29
-#      python find_gap.py $ecflog_name 120
 # 
 # Note: 
 #  - I'm still not sure if /lfs/h1/ops/prod/config/active.ecflow gets updated
@@ -27,37 +27,31 @@ from datetime import datetime, timedelta
 #    of the ecflog to be looked at
 #  - The script also writes out the maximum time gap between LOG entries 
 #    in the ecflog.  I'm surprised that there are often 20-30s gaps. 
-#
-#  Example:
-#  > python find_gap.py
-#    Locate time gaps greater than  0:00:59 between LOG entries in
-#    /lfs/h1/ops/prod/output/ecflow/ecf.decflow02.log :
-#    Maximum time gap between LOGs: 0:00:34
-#  Now rerun with smaller time gap threshold: 
-#  > python find_gap.py ecf.decflow02.log 30
-#    Locate time gaps greater than  0:00:30 between LOG entries in
-#    /lfs/h1/ops/prod/output/ecflow/ecf.decflow02.log :
-#    time gap of 0:00:34 :
-#    LOG:[00:07:07 9.3.2023]  active: /prod/backup/cron/transfer/v2.4/wcoss_network_monitor
-#    LOG:[00:07:41 9.3.2023]  submitted: /prod/primary/18/hrrr/v4.1/23z/conus/post/post_subh/jhrrr_post_f1000 job_size:5165
-#    Maximum time gap between LOGs: 0:00:34 
+#  - As of 2023/07/25, /usr/bin/python3 (symlinked to python3.6) does not seem
+#    to play well with numpy (v1.20.1): got an error message when running this
+#    script directly:
+#      > find_gap.py
+#      > ImportError: Unable to import required dependencies
+#    Maybe because my .bashrc loads module python/3.8.6, and that makes 
+#    /usr/bin/phthon3.6 not working with numpy and pandas?  In any case
+#    'python find_gap.py' works.  
 
 ecfdir='/lfs/h1/ops/prod/output/ecflow/'
 
+delta0=timedelta(seconds=59)
 narg=len(sys.argv)
-if narg == 1 :
+if narg <= 2 :
   f=open('/lfs/h1/ops/prod/config/active.ecflow','r')
   actvecf=f.read()
   f.close
   infile=ecfdir+'ecf.'+actvecf[0:9]+'.log'
-elif narg >= 2 :
-  logf=sys.argv[1]
-  infile=ecfdir+logf
+
+if narg >= 2 :
+  delta0=timedelta(seconds=int(sys.argv[1]))
 
 if narg == 3 :
-  delta0=timedelta(seconds=int(sys.argv[2]))
-else:  
-  delta0=timedelta(seconds=59)
+  logf=sys.argv[2]
+  infile=ecfdir+logf
 
 maxgap=timedelta(seconds=0)
 # Read in the entire ecflog into whole_log:

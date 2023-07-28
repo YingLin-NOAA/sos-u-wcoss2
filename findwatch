@@ -25,15 +25,17 @@ fi
 echo Search for jwatch output in ${ecflog}:
 
 grep jwatch.*lost $ecflog | tee $stmp/watchout
+echo -e '\n'
 
 if [ ${PIPESTATUS[0]} -eq 0 ]
 then
   cat $stmp/watchout | while read tmp
   do
-    echo -e '\n'
+    echo Lost jobs for each instances of jwatch failure: 
     echo ${tmp}
     joblist=`echo $tmp | awk -F"] " '{ print $2 }'`
     cat $joblist
+    echo -e '\n'
   done
 else
   echo No lost job found in the above ecf log.

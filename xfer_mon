@@ -45,6 +45,8 @@ def shp1(xloop, xdata):
 	d=datetime.datetime.today()
 	urlabel[5].set_text("Status as of:")
 	urtime[5].set_text(tnp)
+	urrate[5].set_text("Updates every")
+	urinfo[5].set_text("15 mins")
 
 	logs=['transfer_p1_rate.log', 'transfer_hpss_canned_rate.log', 'transfer_hera_rate.log', 'transfer_rzdm_canned_cp_rate.log', 'transfer_rzdm_canned_bldr_rate.log']
 	for i, log in enumerate(logs):
@@ -106,7 +108,7 @@ def mainlayout(button):
 	urloop.widget=urlayout
 
 palette=[('reversed', 'standout', ''), ('ok', '', 'dark green'), ('warn', '', 'brown'), ('alert', '', 'light red'), ('unk', '', 'light blue')]
-urlabel=[urwid.Text("p1"), urwid.Text("HPSS"), urwid.Text("Hera"), urwid.Text("RZDM CP"), urwid.Text("RZDM BLDR"), urwid.Text("-")]
+urlabel=[urwid.Text("WCOSS P1"), urwid.Text("HPSS"), urwid.Text("Hera"), urwid.Text("RZDM CP"), urwid.Text("RZDM BLDR"), urwid.Text("-")]
 urtime=[urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-")]
 urrate=[urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-")]
 urinfo=[urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-"), urwid.Text("-")]

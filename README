@@ -1,8 +1,3 @@
-These work now on wcoss2/dogwood:
-  chk_failure.sh
-  ecflog_summary.sh
-  kill_xterms.sh
-  ring_bell.sh
-  timeleft.sh
-  timeleft_watch.sh
-  xterms.sh
+If you used to link to a script in this directory (e.g. mecfl_bell.sh) 
+but can't find it now, look for it in /u/nco.sos/util/ - that is now the 
+local repository for https://github.com/NCEP-NCO/sos_util

@@ -32,8 +32,15 @@
 # Add this for wcoss2 later.
 # SPC_PRC=/gpfs/dell1/ptmp/$USER/Special_Procedures
 
-# use 'grep -a' in case job log contains binary character(s): looking at you,
-#   petss_postprob!  (Jan 2023)
+# 2023/09/26
+#   Changed 'sudo -u ops.prod cp -rp ...' 
+#        to 'sudo -u ops.prod -i cp -rp ...'
+#   w/o the -i the sudo no longer worked, due to RFC 11607:
+#     'Add more parm_access control of su and sudo'
+# 2023/01 
+#   use 'grep -a' in case job log contains binary character(s): looking at you,
+#   petss_postprob! 
+
 alias grep='grep -a'
 
 suffix=`date +%Y%m%d_%H%MZ`
@@ -215,8 +222,8 @@ else
   echo "extracting data directory from ${output_file}"
   
   filename=`basename ${data_dir}`
-  echo "sudo -u ops.prod cp -rp ${data_dir} ${dest}/${filename}_${suffix}"
-  sudo -u ops.prod cp -rp ${data_dir} ${dest}/${filename}_${suffix}
+  echo "sudo -u ops.prod -i cp -rp ${data_dir} ${dest}/${filename}_${suffix}"
+  sudo -u ops.prod -i cp -rp ${data_dir} ${dest}/${filename}_${suffix}
 
 fi
 

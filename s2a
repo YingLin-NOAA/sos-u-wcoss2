@@ -1,9 +1,0 @@
-# From SPA Greg Mott, 2022/08/24
-# The output fields are:
-#  Col 1: hh:mm when job became active ($3)
-#  Col 2: s2a time (s) ($6)
-#  Col 3: job name ($1)
-#
-#  sort -k: sort via a key ('-k1' - first column; 'k2' would have sorted by
-#    s2a value) 
-cat /lfs/h1/ops/prod/com/logs/runtime/prod/daily/$(date +"%Y%m%d").daily | awk '$6>100 {print $3, $6, $1}'  | sort -k1

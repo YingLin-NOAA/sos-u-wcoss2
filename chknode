@@ -1,5 +1,4 @@
 #!/bin/sh
-
 # based on Fred's ~/bin/cn
 # to use: chknode <job log>
 
@@ -15,7 +14,18 @@ fi
 badlist=$wrkdir/pbsnodes.badlist
 nodelist=$wrkdir/pbsnodes.nodelist
 
+grep -i -e 'no route to host' -e 'lost communication' $1 | sort -u
+
 grep nodelist $1 | head -1 | tee $wrkdir/nodelist
+ 
+for ntype in dpp nid
+do
+  grep -q $ntype $wrkdir/nodelist
+  if [ $? -eq 0 ]
+  then
+    nodetype=$ntype
+  fi
+done
  
 m=`cat $wrkdir/nodelist | awk '{print $4}' | cut -c 4- | tr -d '[]' | sed -e 's/,/ /g'`
 
@@ -24,15 +34,15 @@ echo
 pbsnodes -l > $badlist
 
 for nodes in $m; do
-	#if there are node ranges like 001000-001004
-	if echo $nodes | grep -q "-" ; then
-		start=`echo $nodes | awk -F '-' '{print $1}'`
-		finish=`echo $nodes | awk -F '-' '{print $2}'`
-		for node in `seq -w $start $finish`; do
-                        grep nid$node $badlist
-		done
-	#no dashes, just single node - in this case the var is 'nodes':
-	else
-                        grep nid$nodes $badlist
-	fi
+  #if there are node ranges like 001000-001004
+  if echo $nodes | grep -q "-" ; then
+    start=`echo $nodes | awk -F '-' '{print $1}'`
+    finish=`echo $nodes | awk -F '-' '{print $2}'`
+    for node in `seq -w $start $finish`; do
+      grep ${nodetype}${node} $badlist
+    done
+  #no dashes, just single node - in this case the var is 'nodes':
+  else
+    grep ${nodetype}${nodes} $badlist
+  fi
 done

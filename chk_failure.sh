@@ -9,6 +9,7 @@
 #   1. Job output file (required)
 #   2. nosave: do not save working directory, if optional 2nd argument is 
 #      'nosave'.  
+#      nosudo: save under own username (in case sudo to ops.prod is not working)
 #
 # 'sort -u' so that if there are, say hundreds of identical lines of 'SIGSEGV',
 #   only one will print out.
@@ -32,6 +33,9 @@
 # Add this for wcoss2 later.
 # SPC_PRC=/gpfs/dell1/ptmp/$USER/Special_Procedures
 
+# 2024/01/31
+#   Added 'nosudo' option, in case sudo isn't working, files will be saved
+#   under username in */ptmp/ops.prod/, rather than as ops.prod. 
 # 2023/09/26
 #   Changed 'sudo -u ops.prod cp -rp ...' 
 #        to 'sudo -u ops.prod -i cp -rp ...'
@@ -216,15 +220,23 @@ else
     then 
       exit
     fi
+  else
+    saveopt=sudo
   fi 
 
   dest="/lfs/h1/nco/ptmp/ops.prod"
   echo "extracting data directory from ${output_file}"
   
   filename=`basename ${data_dir}`
-  echo "sudo -u ops.prod -i cp -rp ${data_dir} ${dest}/${filename}_${suffix}"
-  sudo -u ops.prod -i cp -rp ${data_dir} ${dest}/${filename}_${suffix}
-
+  
+  if [ $saveopt = 'sudo' ];
+  then
+    echo "sudo -u ops.prod -i cp -rp ${data_dir} ${dest}/${filename}_${suffix}"
+    sudo -u ops.prod -i cp -rp ${data_dir} ${dest}/${filename}_${suffix}
+  else
+    echo "cp -rp ${data_dir} ${dest}/${filename}_${suffix}"
+    cp -rp ${data_dir} ${dest}/${filename}_${suffix}
+  fi
 fi
 
 exit

@@ -138,6 +138,7 @@ else
     -e 'launch RPC: Couldn' \
     -e missing \
     -e 'MPI_Abort' \
+    -e ' NaN ' \
     -e 'no such file or directory' \
     -e 'No GEMPAK parameter name defined for this grid' \
     -e 'Permission denied' \

@@ -141,6 +141,7 @@ else
     -e ' NaN ' \
     -e 'no such file or directory' \
     -e 'No GEMPAK parameter name defined for this grid' \
+    -e 'OSError:' \
     -e 'Permission denied' \
     -e 'PROBLEM ARCHIVING' \
     -e 'RC=[1-999]' \

@@ -128,6 +128,7 @@ else
     -e failed \
     -e 'failed with exit code' \
     -e fatal \
+    -e 'file busy' \
     -e 'file not found' \
     -e 'HPSS_ENOENT' \
     -e 'invalid' \

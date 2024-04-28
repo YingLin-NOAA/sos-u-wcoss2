@@ -1,0 +1,18 @@
+# find short files with 'ls -s wild*card | sort -n'
+# copy this script to stmp dir, edit with the short files
+# sudo to dfprod, cd to the data dir
+# then  $stmp/rename_short_files
+
+for file in \
+ENSEMBLE.halfDegree.MET.fcst_et019.147.2024042812 \
+ENSEMBLE.halfDegree.MET.fcst_et015.270.2024042812 \
+ENSEMBLE.halfDegree.MET.fcst_et015.165.2024042812 \
+ENSEMBLE.halfDegree.MET.fcst_et018.174.2024042812 \
+ENSEMBLE.halfDegree.MET.fcst_et015.096.2024042812 \
+ENSEMBLE.halfDegree.MET.fcst_et010.111.2024042812 \
+ENSEMBLE.halfDegree.MET.fcst_et017.081.2024042812 \
+ENSEMBLE.halfDegree.MET.fcst_et017.117.2024042812 
+do
+  mv $file ${file}.short
+done
+

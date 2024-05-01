@@ -1,7 +1,9 @@
 echo "
 ps -ef | grep vnc
-vncserver :$n -geometry 1200x1000
+vncserver :\$n -geometry 1200x1000
 In VNC viewer: 
-[clogin#,dlogin#].wcoss2.ncep.noaa.gov:$n 
-vncserver -kill $n"
+[clogin#,dlogin#].wcoss2.ncep.noaa.gov:\$n 
+vncserver -kill :\$n
+F8 to open context menu"
+
 

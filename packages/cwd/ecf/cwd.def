@@ -1,0 +1,13 @@
+suite prod
+family cwd
+#  defstatus complete
+  edit PACKAGEHOME '/lfs/h1/ops/%ENVIR%/packages/cwd.%cwd_ver%'
+  edit MACHINE_SITE 'production'
+  edit PARATEST 'YES'
+  task cwd
+    label STATUS " "
+endfamily
+endsuite
+
+#ecflow_client --replace /prod/cwd /lfs/h1/ops/prod/packages/cwd.v1.0.0/ecf/cwd.def --host=decflow01 --port=31415
+

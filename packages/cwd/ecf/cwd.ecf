@@ -1,0 +1,92 @@
+#!/bin/sh
+
+set -x
+export model=cwd
+%include <head.h>
+
+export COMOUT=${COMOUT:-$COMROOT/ecflow/cwd}
+
+if [ ! -f $COMOUT ] ; then
+mkdir -p $COMOUT
+fi
+
+export envir=%ENVIR%
+export STATUSFILE=${COMOUT}/cwd.status
+export SWITCHLOG=${COMOUT}/switch.log
+export status=`cat $STATUSFILE`
+
+# This job no longer sends infomation to rzdm.
+#if [ %PARATEST% == "YES" ]; then
+#   export RZDMDIR=wcoss2/idsb/$envir/status/test/cwd
+#else
+#   if [ $envir == "prod" ]; then
+#      #export RZDMDIR=wcoss2/idsb/$envir/status/cwd
+#      export RZDMDIR=pmb/status/cwd
+#   else
+#      export RZDMDIR=wcoss2/idsb/$envir/status/test/cwd
+#   fi
+#fi
+
+if [ $status = 'NO' ]
+then
+    echo "YES" > $STATUSFILE
+    echo "`date`:ECF: CWD Declared" >> $SWITCHLOG
+    ecflow_client --label STATUS "CWD has been declared"
+
+    #----------------------------------------------------------------------
+    # The following line is added to support the transition from rzdm to ncorzdm
+    #----------------------------------------------------------------------
+#    echo "`date`:ECF: CWD Declared"
+#    echo "RZDMDIR= $RZDMDIR"
+
+#    ssh nwprod@ncorzdm "cd $RZDMDIR ; ln -sf cwd_on.shtml cwd_status.shtml ; touch cwd_info.txt"
+
+trap 0                    # Remove all traps
+exit 0                    # End the shell
+
+else
+    echo "NO" > $STATUSFILE
+    echo "`date`:ECF: CWD Expired" >> $SWITCHLOG
+    ecflow_client --label STATUS "CWD not in effect"
+
+    #----------------------------------------------------------------------
+    # The following line is added to support the transition from rzdm to ncorzdm
+    #----------------------------------------------------------------------
+
+#    echo "`date`:ECF: CWD Expired"
+#    echo "RZDMDIR= $RZDMDIR"
+
+#    ssh nwprod@ncorzdm "cd $RZDMDIR ; ln -sf cwd_off.shtml cwd_status.shtml ; touch cwd_info.txt"
+
+%include <tail.h>
+
+fi
+
+%manual
+######################################################################
+PURPOSE:  This job is a toggle for sending CWD status messages to the web.
+
+
+REMARKS:  If a CWD is declared this job is run to change the status of the CWD
+          message at the following web location:
+
+#change for wcoss2
+
+          http://www.nco.ncep.noaa.gov/pmb/status/cwd
+
+          Once CWD expires, or is allowed to expire, this job is run a second
+          time to switch the status message back to off on the web page.
+          This job will remain in the active state until it is rerun once CWD
+          is allowed to expire.
+
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
+

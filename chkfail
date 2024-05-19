@@ -1,20 +1,21 @@
 #!/bin/sh
 # 1. check job *.o file for a list of known error messages 
-# 2. check model name in (downloaded daily by cron) Special Procedures
-# 3. (under development) check various output files in output dir for node_failed
-#    info
-# 4. save wrkdir using Hoai's script (optional)
+# 2. save wrkdir (optional)
 # 
 # Arguments:
 #   1. Job output file (required)
 #   2. nosave: do not save working directory, if optional 2nd argument is 
-#      'nosave'.  
-#      nosudo: save under own username (in case sudo to ops.prod is not working)
+#        'nosave'.  
+#      nosudo: save under own username (in case sudo to ops.prod is not 
+#      working)
+#
+# No attempt is made to save working dir if the job is pre-empted, or 
+#   there is 'no route to host' in the job log.  
 #
 # 'sort -u' so that if there are, say hundreds of identical lines of 'SIGSEGV',
 #   only one will print out.
 #
-# Per Eric Rogers in re NAM code issue, most aborts trigger prints in the 
+# NAM code issues: most aborts trigger prints in the 
 # microphysics that Brad added, with "WARN#" at the start of the message. 
 # 'WARN1" messages are not a problem, they pop up occasionally almost every 
 # run due to relatively large amounts of moisture in the stratosphere. But if 
@@ -29,10 +30,6 @@
 # output when wgrib2 is used on a non-existant but optional input file. 
 # 
 
-# Special procedures are downloaded daily (cron'd wget):
-# Add this for wcoss2 later.
-# SPC_PRC=/gpfs/dell1/ptmp/$USER/Special_Procedures
-
 # 2024/01/31
 #   Added 'nosudo' option, in case sudo isn't working, files will be saved
 #   under username in */ptmp/ops.prod/, rather than as ops.prod. 
@@ -42,9 +39,11 @@
 #   w/o the -i the sudo no longer worked, due to RFC 11607:
 #     'Add more parm_access control of su and sudo'
 # 2023/01 
-#   use 'grep -a' in case job log contains binary character(s): looking at you,
-#   petss_postprob! 
-
+#   use 'grep -a' in case job log contains binary character(s)
+#   petss_postprob had this problem 
+# 2020/08 
+#   YL Initial chk_failure.sh, combined with Hoai's script to save working
+#   directory
 alias grep='grep -a'
 
 suffix=`date +%Y%m%d_%H%MZ`
@@ -81,7 +80,7 @@ else
   echo $output_file | grep hyspt_canned_post 
   err1=$?
   if [ $err1 -eq 0 ]; then
-    # proceed if the otuput file does contain the 'DID NOT mirror' message
+    # proceed if the output file does contain the 'DID NOT mirror' message
     # (supress outout of matching line here (-q), check $? to see if there
     # is a match:
     grep -q 'HYSPLIT output DID NOT mirror successfully' $output_file
@@ -157,9 +156,10 @@ else
     -e 'sending SIGTERM to' \
     -e Sev1 \
     -e severe \
+    -e SIGSEGV \
     -e 'target_IP=' \
     -e Terminated \
-    -e SIGSEGV \
+    -e TopologyException \
     -e 'unable to set' \
     -e 'unexplained error' \
     -e 'unphysical' \
@@ -170,10 +170,10 @@ else
     ${output_file} | sort -u | grep -v ' + eval ' | grep -v 'LIBRARY_PATH' | grep -v 'grep ' | grep -v 'ERROR 0' | grep -v 'ERROR \$'
   
   # check for walltime used:
-    grep '\.walltime' ${output_file}
+  grep '\.walltime' ${output_file}
   # did the job complete successfully?  As of 2022/05/04, wcoss2 work flow does
   # not have an equivalent of wcoss1 ecf's "Successfully completed".
-    grep 'ecflow_client --complete' ${output_file}
+  grep 'ecflow_client --complete' ${output_file}
   # 
   # The grep -v 'eval ATP_HOME=' is to filter out the excessively long line
   #   from cray output:
@@ -181,18 +181,10 @@ else
   # LMOD_REF_COUNT_LD_LIBRARY: long line in wsa_enlil output
   # Does the job use the intranet? 
   # pnwps_datachk sends to intra.ncep.noaa.gov: 
-    grep intra ${output_file} | grep timeout | sort -u 
-    # The node_load job's output has just a couple of lines with nwprod@intra
-    # but the lines are very long, so print out just the last column:
-    grep \@intra ${output_file} | awk '{ print $NF }' 
-  # Is there an entry in the Special Procedures for $model?
-  # grep -i "\ $model" ${SPC_PRC} > /dev/null
-  err=$?
-  if [ $err -eq 0 ]; then
-    echo 
-    echo $model has entry in Special Procedures
-    echo
-  fi
+  grep intra ${output_file} | grep timeout | sort -u 
+  # The node_load job's output has just a couple of lines with nwprod@intra
+  # but the lines are very long, so print out just the last column:
+  grep \@intra ${output_file} | awk '{ print $NF }' 
 
   # Anything place other than the *.o file to look for errors?
   # if the *.o file has specified a WORK_DIR (SREF), save that directory; 

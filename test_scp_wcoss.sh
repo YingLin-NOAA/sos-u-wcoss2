@@ -12,7 +12,7 @@ elif [ $here1 = 'd' ]
 then
   there1='c'
 else
-  Echo Calice! Unrecognized hostname, EXIT
+  echo Calice! Unrecognized hostname, EXIT
 fi
 
 stmpdir=/lfs/h1/nco/stmp/$USER

@@ -1,0 +1,64 @@
+#!/bin/sh
+
+set -x
+export model=cwd_ece
+%include <head.h>
+
+export COMOUT=${COMOUT:-$COMROOT/ecflow/cwd}
+
+if [ ! -f $COMOUT ] ; then
+mkdir -p $COMOUT
+fi
+
+export envir=%ENVIR%
+export STATUSFILE=${COMOUT}/cwd_ece.status
+export SWITCHLOG=${COMOUT}/switch.log
+export status=`cat $STATUSFILE`
+
+if [ $status = 'NO' ]
+then
+    echo "YES" > $STATUSFILE
+    echo "`date`:ECF: CWD or ECE Declared" >> $SWITCHLOG
+    ecflow_client --label STATUS "CWD or ECE has been declared"
+
+trap 0                    # Remove all traps
+exit 0                    # End the shell
+
+else
+    echo "NO" > $STATUSFILE
+    echo "`date`:ECF: CWD or ECE Expired" >> $SWITCHLOG
+    ecflow_client --label STATUS "Neither CWD nor ECE is in effect"
+
+%include <tail.h>
+
+fi
+
+%manual
+######################################################################
+PURPOSE:  This job is a toggle to turn the cwd_ece light on/off.
+
+
+REMARKS:  If a CWD/ECE is declared this job is run to change the status
+          of the CWD/ECE on ecf ui on/off (green: CWD/ECE in effect; 
+          yellow: CWD/ECE not in effect) 
+
+#change for wcoss2
+
+          https://www.nco.ncep.noaa.gov/status/cwd
+
+          Once CWD/ECE expires, or is allowed to expire, this job is run a second
+          time to switch the status message back to off on the web page.
+          This job will remain in the active state until it is rerun once CWD/ECE
+          is allowed to expire.
+
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
+

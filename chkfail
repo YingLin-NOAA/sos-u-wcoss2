@@ -145,6 +145,7 @@ else
     -e 'OSError:' \
     -e 'Permission denied' \
     -e 'PROBLEM ARCHIVING' \
+    -e 'Range violation' \
     -e 'RC=[1-999]' \
     -e 'refusing to create empty archive' \
     -e 'Resource temporarily unavailable' \

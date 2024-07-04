@@ -11,21 +11,22 @@ then
 	exit 1
 fi
 
+DCOM=/lfs/h1/ops/prod/dcom
 yesterday=${1}
 today=${2}
 cycle=${3}
 email_addr=${4}
-missing=/u/Hoai.Vo/cmc/missing.txt
+missing=/lfs/h1/nco/stmp/ying.lin/missing.txt
 
 rm -rf ${missing}
 touch ${missing}
 
-yesterday_dir="/gpfs/dell1/nco/ops/dcom/prod/${yesterday}/wgrbbul/cmcens_gb2"
+yesterday_dir="$DCOM/${yesterday}/wgrbbul/cmcens_gb2"
 cd ${yesterday_dir}
 yesterday_file_count=`ls -1 ${yesterday}${cycle}* | wc -l`
 yesterday_files="ls -1 ${yesterday}${cycle}*"
 
-today_dir="/gpfs/dell1/nco/ops/dcom/prod/${today}/wgrbbul/cmcens_gb2"
+today_dir="$DCOM/${today}/wgrbbul/cmcens_gb2"
 today_file_count=0
 
 for FILE in `eval ${yesterday_files}`

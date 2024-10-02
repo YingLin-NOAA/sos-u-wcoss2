@@ -3,11 +3,7 @@
 # 2. save wrkdir (optional)
 # 
 # Arguments:
-#   1. Job output file (required)
-#   2. nosave: do not save working directory, if optional 2nd argument is 
-#        'nosave'.  
-#      nosudo: save under own username (in case sudo to ops.prod is not 
-#      working)
+#   Job log file (required)
 #
 # No attempt is made to save working dir if the job is pre-empted, or 
 #   there is 'no route to host' in the job log.  
@@ -29,7 +25,12 @@
 # failure.  Plenty of successfully completed jobs have 'FATAL ERROR' in the
 # output when wgrib2 is used on a non-existant but optional input file. 
 # 
-
+# 2024/10/02
+#   Removed sudo to ops.prod (and the nosudo option), rundir will simply 
+#     be saved under user name
+#   Also removed 'nosave' option - user will be asked whether to save
+#     the rundir [y/n]
+# 
 # 2024/01/31
 #   Added 'nosudo' option, in case sudo isn't working, files will be saved
 #   under username in */ptmp/ops.prod/, rather than as ops.prod. 
@@ -210,27 +211,15 @@ else
     fi
   fi 
 
-  if [ $# -eq 2 ]
-  then
-    saveopt=$2
-    if [ $saveopt = 'nosave' ];
-    then 
-      exit
-    fi
-  else
-    saveopt=sudo
-  fi 
-
   dest="/lfs/h1/nco/ptmp/ops.prod"
   echo "extracting data directory from ${output_file}"
   
   filename=`basename ${data_dir}`
-  
-  if [ $saveopt = 'sudo' ];
-  then
-    echo "sudo -u ops.prod -i cp -rp ${data_dir} ${dest}/${filename}_${suffix}"
-    sudo -u ops.prod -i cp -rp ${data_dir} ${dest}/${filename}_${suffix}
-  else
+ 
+  echo Copy $data_dir to ${dest}/?  [y/n]
+  read ans
+  if [[ "$ans" == "y" || "$ans" == "Y" ]]
+  then 
     echo "cp -rp ${data_dir} ${dest}/${filename}_${suffix}"
     cp -rp ${data_dir} ${dest}/${filename}_${suffix}
   fi

@@ -109,6 +109,7 @@ else
     -e 'bad file descriptor' \
     -e 'broken pipe' \
     -e 'BUFR ARCHIVE LIBRARY ABORT' \
+    -e 'cannot find' \
     -e 'claim exceeds' \
     -e 'command timeout' \
     -e 'connection timed out' \

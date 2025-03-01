@@ -1,0 +1,75 @@
+#!/bin/sh
+ 
+PTMP=/lfs/h1/nco/ptmp/$USER/chkhur
+if [ ! -d $PTMP ] 
+then 
+  mkdir -p $PTMP
+fi
+
+out1=$PTMP/chkhur.out1
+out2=$PTMP/chkhur.out2
+rm -f $out1 $out2
+
+# 2022/05/06: there doesn't seem to be a wcoss2 equiv of 
+#  /gpfs/dell1/nco/ops/nwprod/versions for now.
+#HUR=/lfs/h1/ops/prod/com/hwrf/v13.2
+#NHC=/lfs/h1/ops/prod/com/nhcg/v3.3/storm-data/ncep
+#GFS=/lfs/h1/ops/prod/com/gfs/v16.3/syndat
+NHC=/lfs/h1/ops/prod/dcom/nhc/atcf/ncep
+
+# 2024/07/01: check for set up in both hafs v1 and v2 until HAFS v2 is
+#  implemented 
+# From SPA Wei to SDM: 
+# HAFS v2.0.3 has been implemented to production space for its final testing 
+# and PARA dbnet alerts will be turned on today. For better results, please 
+# set up hurricanes for both v1.0.7 and v2.0.3.
+#
+# 2024/07/16, SPA Wei to SDM: HAFS v2.0 is in production, and v1.0 is retired. 
+# Setup storms for v2.0 only is sufficient.
+#   leaving the 'for ... do ... done' in place for when v3.0 is getting ready  
+# for ver in v1.0 v2.0 
+for ver in v2.0 
+do 
+HUR=/lfs/h1/ops/prod/com/hafs/$ver
+echo -e '\n' For ${HUR}: 
+cd  $HUR/inphfsa;pwd;    cat   nstorms  storms.all;  echo "HFSA: # of storms `cat nstorms`  stormdate : `cat stormdate` " > $out1;  ls -l stormdate
+if [ -s storms.all ]
+then 
+  cat storms.all | cut -c 1-18 >> $out1
+fi
+cd  $HUR/inphfsb;pwd;    cat   nstorms  storms.all;  echo "HFSB: # of storms `cat nstorms`  stormdate : `cat stormdate` " > $out2;  ls -l stormdate 
+echo ""
+if [ -s storms.all ]
+then 
+  cat storms.all | cut -c 1-18 >> $out2
+fi
+cat $out1 $out2
+done
+
+# also print out the first 33 chars of 
+# $NHC/tcvitals
+# for comparison:
+# echo 
+# echo Unique storm names from $NHC/storm?:
+# cat $NHC/storm? | cut -c 1-33 | sort -u
+
+# Earlier on I planned on writing out unique storm names for the $day, $cyc
+# from /gpfs/dell1/nco/ops/com/gfs/prod/syndat/syndat_tcvitals.$yyyy 
+# since Holly was referring to that file on 9/07. 
+# Now print out unique storm names in 
+#   /gpfs/dell1/nco/ops/com/gfs/prod/syndat/syndat_tcvitals.$yyyy 
+# for this cycle:
+# Be sure to change the hardwired '20' below before year 2100
+# yyyy=20`cat stormdate | cut -c 1-2`
+# yyyymmdd=${yyyy}`cat stormdate | cut -c 3-6`
+# hh=`cat stormdate | cut -c 7-8`
+# echo
+# echo Unique storm names from $GFS/syndat_tcvitals.${yyyy}:
+# grep " $yyyymmdd ${hh}00" $GFS/syndat_tcvitals.$yyyy | cut -c 1-33 | sort -u 
+
+# JTWC=/lfs/h1/ops/prod/dcom/$yyyymmdd/wtxtbul/storm_data
+# echo
+# echo Unique storm names from $JTWC/storm?:
+# cat $JTWC/storm? | cut -c 1-33 | sort -u
+
+exit

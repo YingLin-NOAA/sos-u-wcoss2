@@ -1,12 +1,14 @@
 #!/bin/sh
-# 'watch' how much time is left for a job.  Job ID is the argument.
+# 'watch' how much time is left for a job.  Enter one or more jobid(s) as
+#  argument.
 #
 if [ $# -eq 0 ]
 then
-  echo Needs argument jobID
+  echo Needs at least one argument as jobID
   exit
 else
-  jobid=$1
+  args=("$@")
 fi
-watch --interval 90 "qstat -f $jobid | grep walltime"
+
+watch --interval 90 "echo ${args[@]}; qstat -f ${args[@]} | grep walltime"
 

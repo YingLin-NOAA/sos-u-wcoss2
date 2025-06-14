@@ -4,10 +4,10 @@
 #	ll /gpfs/dell1/nco/ops/dcom/prod/20210512/wgrbbul/cmcens_gb2/2021051212*|wc -l
 #	ll /gpfs/dell1/nco/ops/dcom/prod/20210511/wgrbbul/cmcens_gb2/2021051112*|wc -l
 
-if [ ! $# -eq 4 ]
+if [ ! $# -eq 3 ]
 then
-	echo "Usage $0 <Yesterday PDY> <Today PDY> <cycle> <your email address>"
-	echo "Example: $0 20210511 20210512 12 Hoai.Vo@noaa.gov"
+	echo "Usage $0 <Yesterday PDY> <Today PDY> <cycle>"
+	echo "Example: $0 20210511 20210512 12"
 	exit 1
 fi
 
@@ -15,8 +15,13 @@ DCOM=/lfs/h1/ops/prod/dcom
 yesterday=${1}
 today=${2}
 cycle=${3}
-email_addr=${4}
-missing=/lfs/h1/nco/stmp/ying.lin/missing.txt
+
+STMP=/lfs/h1/nco/stmp/$USER
+if [ ! -d $STMP ]
+then
+  mkdir $STMP
+fi
+missing=$STMP/missing_cmcens.txt
 
 rm -rf ${missing}
 touch ${missing}
@@ -50,5 +55,6 @@ then
 	echo "${yesterday}'s CMC file count: ${yesterday_file_count}" >> ${missing}
 	echo "${today}'s CMC file count: ${today_file_count}" >> ${missing}
 	echo "Diff CMC file count: ${diff_file_count}" >> ${missing}
-	cat ${missing} | mail -s "missing cmc files" ${email_addr}
+	cat ${missing} | mail -s "missing cmc files" ${USER}@noaa.gov
 fi
+

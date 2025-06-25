@@ -1,0 +1,110 @@
+#!/bin/bash
+pdy=`date +%Y%m%d`
+spdy=`echo $pdy | cut -c3-`
+hh=`date +%H`
+
+if [ $hh -ge "00" ] && [ $hh -le "03" ]; then cyc="0000";
+elif [ $hh -ge "04" ] && [ $hh -le "09" ]; then cyc="0600";
+elif [ $hh -ge "10" ] && [ $hh -le "15" ]; then cyc="1200";
+elif [ $hh -ge "16" ] && [ $hh -le "21" ]; then cyc="1800";
+elif [ $hh -ge "22" ] && [ $hh -le "23" ]; then cyc="0000"; fi
+
+readarray -t nhc < <(grep -h "$pdy $cyc" /lfs/h1/ops/prod/dcom/nhc/atcf/ncep/storm*)
+readarray -t jtwc < <(grep -s -h "$pdy $cyc" /lfs/h1/ops/prod/dcom/$pdy/wtxtbul/storm_data/storm[1-7])
+readarray -t hafsa < <(sed "s/$spdy/$pdy/" /lfs/h1/ops/prod/com/hafs/v2.1/inphfsa/storms.all)
+readarray -t hafsb < <(sed "s/$spdy/$pdy/" /lfs/h1/ops/prod/com/hafs/v2.1/inphfsb/storms.all)
+
+#an empty HAFS-B input produces hafsb array length of 1 because of new line char
+#if the first element is empty, then it's an empty file and we can set length to 0
+#grep filters out new line for NHC/JTWC
+#HAFS-A technically will have the same issue if there's either a NHC or JTWC storm but the diff will catch it
+
+nnhc=${#nhc[@]}
+njtwc=${#jtwc[@]}
+nhafsa=${#hafsa[@]}
+nhafsb=${#hafsb[@]}
+if [ -z "${hafsb[0]}" ]; then
+	nhafsb=0
+else
+	nhafsb=${#hafsb[@]}
+fi
+
+echo "For $pdy $cyc"
+
+echo "NHC Storms:"
+grep -h "$pdy $cyc" /lfs/h1/ops/prod/dcom/nhc/atcf/ncep/storm*
+
+echo "JTWC Storms:"
+grep -s -h "$pdy $cyc" /lfs/h1/ops/prod/dcom/$pdy/wtxtbul/storm_data/storm[1-7]
+
+echo
+echo "HAFS-A prod"
+#echo -n "# of storms: "
+#cat /lfs/h1/ops/prod/com/hafs/v2.0/inphfsa/nstorms
+#echo -n "storm date: "
+#cat /lfs/h1/ops/prod/com/hafs/v2.0/inphfsa/stormdate
+cat /lfs/h1/ops/prod/com/hafs/v2.1/inphfsa/storms.all
+echo
+echo "HAFS-B prod"
+#echo -n "# of storms: "
+#cat /lfs/h1/ops/prod/com/hafs/v2.0/inphfsb/nstorms
+#echo -n "storm date: "
+#cat /lfs/h1/ops/prod/com/hafs/v2.0/inphfsb/stormdate
+cat /lfs/h1/ops/prod/com/hafs/v2.1/inphfsb/storms.all
+
+echo
+echo '```'
+echo "For $pdy $cyc"
+echo
+
+#numbers are needed in more storms are set up than ones requested
+if (( $nnhc == $nhafsb )); then
+	for i in $(seq 0 $(($nnhc-1)))
+	do
+		#echo -n "HAFS-B NHC  $(($i+1)): "
+		#if [ "${nhc[$i]}" == "${hafsb[$i]}" ]; then
+		if [[ -z $(diff <(echo ${nhc[$i]}) <(echo ${hafsb[$i]} | awk '{sub ("^0*", "", $26); print}')) ]]; then
+			#echo ${nhc[$i]} | awk '{ print $2 " " $3 " OK" }'
+			nhcb[$i]="OK"
+		else
+			#echo
+			#echo "NHC    file: ${nhc[$i]}"
+			#echo "HAFS-B file: ${hafsb[$i]}"
+			nhcb[$i]="NOT OK"
+		fi
+	done
+else
+	echo "Check number of storms in HAFS-B is the same as NHC"
+fi
+
+echo "Source   #    Name       HAFS-A HAFS-B"
+if (( $nnhc + $njtwc == $nhafsa )); then
+	for i in $(seq 0 $(($nnhc-1)))
+	do
+		echo -n "NHC  $(($i+1))   "
+		#if [ "${nhc[$i]}" == "${hafsa[$i]}" ]; then
+		if [[ -z $(diff <(echo ${nhc[$i]}) <(echo ${hafsa[$i]} | awk '{sub ("^0*", "", $26); print}')) ]]; then
+			echo ${nhc[$i]} | awk '{ printf "%-4s %-10s %-6s %-6s\n", $2, $3, "OK", nhcb}' nhcb="${nhcb[$i]}"
+		else
+			echo ${nhc[$i]} | awk '{ printf "%-4s %-10s %-6s %-6s\n", $2, $3, "NOT OK", nhcb}' nhcb="${nhcb[$i]}"
+			#echo "                NOT OK ${nhcb[i]}"
+			#echo "NHC    file: ${nhc[$i]}"
+			#echo "HAFS-A file: ${hafsa[$i]}"
+		fi
+	done
+	for i in $(seq 0 $(($njtwc-1)))
+	do
+		echo -n "JTWC $(($i+1))   "
+		#if [ "${jwtc[$i]}" == "${hafsa[$i+$nnhc]}" ]; then
+		if [[ -z $(diff <(echo ${jtwc[$i]}) <(echo ${hafsa[$i+$nnhc]})) ]]; then
+			echo ${jtwc[$i]} | awk '{printf "%-4s %-10s %-6s\n", $2, $3, "OK"}'
+		else
+			echo ${jtwc[$i]} | awk '{printf "%-4s %-10s %-6s\n", $2, $3, "NOT OK"}'
+			#echo "JTWC   file: ${jtwc[$i]}" 
+			#echo "HAFS-A file: ${hafsa[$i+$nnhc]}"
+		fi
+	done
+else
+	echo "Check number of NHC + JTWC storms add up to HAFS-A"
+fi
+echo '```'

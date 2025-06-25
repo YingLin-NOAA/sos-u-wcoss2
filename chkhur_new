@@ -29,7 +29,7 @@ else
 	nhafsb=${#hafsb[@]}
 fi
 
-echo "For $pdy $cyc"
+echo "For $pdy $cyc" v2.1 eval:
 
 echo "NHC Storms:"
 grep -h "$pdy $cyc" /lfs/h1/ops/prod/dcom/nhc/atcf/ncep/storm*
@@ -54,7 +54,7 @@ cat /lfs/h1/ops/prod/com/hafs/v2.1/inphfsb/storms.all
 
 echo
 echo '```'
-echo "For $pdy $cyc"
+echo "For $pdy $cyc" v2.1 eval: 
 echo
 
 #numbers are needed in more storms are set up than ones requested

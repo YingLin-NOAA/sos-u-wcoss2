@@ -10,5 +10,5 @@ else
   args=("$@")
 fi
 
-watch --interval 90 "echo ${args[@]}; qstat -f ${args[@]} | grep walltime"
+watch --interval 90 "echo ${args[@]}; qstat -f ${args[@]} | grep -e 'Job Id' -e 'Job_Name' -e 'walltime'"
 

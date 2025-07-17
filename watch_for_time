@@ -1,0 +1,40 @@
+#!/bin/sh 
+if [ $# -lt 1 ]
+then
+  echo 'need one argument (e.g. nwm)'
+  exit
+else
+  model=$1
+fi
+
+wrkdir=/lfs/h1/nco/stmp/$USER/watch_walltime
+if [ ! -d $wrkdir ]
+then
+  mkdir -p $wrkdir
+fi
+
+qlist=$wrkdir/${model}_jid_list
+qout=$wrkdir/${model}_qstat_out
+
+while [ 2 -eq 2 ]
+do
+  qstat | grep $model | grep ops.prod | grep -v transfer | awk '{print $1}' > $qlist
+  qstat -f `cat $qlist` | grep -e 'Job Id' -e 'Job_Name' -e 'walltime' > $qout
+
+  nline=`wc -l < $qout`
+
+  if [ $nline -ge 4 ]; then
+    printf "Job id %9s Jobname  %35s  T_limit T_left\n" 
+    /u/ying.lin/sos/sort_time.py $qout
+  else
+    echo Skip this round.  $qout has too few lines:
+    cat $qout
+  fi
+
+  date
+  echo  
+  sleep 300
+done
+
+
+

@@ -28,7 +28,7 @@ NHC=/lfs/h1/ops/prod/dcom/nhc/atcf/ncep
 # Setup storms for v2.0 only is sufficient.
 #   leaving the 'for ... do ... done' in place for when v3.0 is getting ready  
 # for ver in v1.0 v2.0 
-for ver in v2.0 
+for ver in v2.1 
 do 
 HUR=/lfs/h1/ops/prod/com/hafs/$ver
 echo -e '\n' For ${HUR}: 

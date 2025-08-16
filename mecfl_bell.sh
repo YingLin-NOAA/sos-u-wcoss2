@@ -15,7 +15,18 @@ else
   SENDMAIL=YES
   LINUX=NO
   FULL=NO
-  BEEP="echo -ne '\a\a\a'"
+
+# Audio alert options on Windows:
+# 3 beeps when using Tectia:
+#  BEEP="echo -ne '\a\a\a'"
+
+# If using SecureCRT, depending what audio file you use when setting up
+# Options/Global Options/Terminal/Advanced/Audio bell:
+# A long 'boing!':
+# BEEP="echo -ne '\a'"
+
+# 3 short beeps or buzzes: 
+  BEEP="echo -ne '\a'; sleep 1; echo -ne '\a'; sleep 1; echo -ne '\a'"
 
   while (("$#")); do
     case "$1" in
@@ -69,6 +80,10 @@ print "#==================================================================#"
 #                                                                  #
 #  Revison History                                                 #
 #  ---------------                                                 #
+#  10 Aug 2025:modified BEEP for Windows' secureCRT                #
+#   6 May 2025:use a separate ptmp WRKDIR if running on Linux, so  #
+#    one user can have this script running from both a Windows and #
+#    a Linux log-in sessions, without using a co-mingled WRKDIR    # 
 #  31 Dec 2023:added line number check and			   #
 #    updated arg parsing method					   #
 #   3 Apr 2023: ssh from wcoss2 to lw-sos1/sos2/sos3 now works     #

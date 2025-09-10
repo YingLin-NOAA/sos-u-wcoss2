@@ -6,6 +6,10 @@
 #  '001279-001281' - into individual nodes, then grep each node from the 
 #   output of 'pbsnodes -l', which lists problematic nodes
 
+# use 'grep -a' in case job log contains binary character(s) - sometimes
+# happens when a job is killed due to a bad node.
+alias grep='grep -a'
+
 wrkdir=/lfs/h1/nco/stmp/$USER
 if [ ! -d $wrkdir ]
 then

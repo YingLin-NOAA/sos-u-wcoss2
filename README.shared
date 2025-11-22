@@ -1,26 +1,61 @@
-Scripts in /lfs/h1/nco/omb/save/ying.lin/sos_scripts/:
+  These scripts are not quite as vetted as those I had added to our 'official' SOS scripts repository (https://github.com/NCO-HPC/sos_util, locally at /lfs/h1/nco/omb/save/nco.sos/util). 
 
 chk_walltime.sh (calls timediff_pbs.py): get the walltime info (walltime limit/
   used) from job log (script argument).  In case resources_used.walltime does
   not have useful info - often happens, the script also gets the stime and
   mtime, and computes the difference between the two, which could be used as
-  a proxy for walltime used 
+  a proxy for walltime used
+ 
 find_gap.py: find time gap between ecflog LOG entries. w/o argument, it prints
   out the largest gap found (e.g. 0:00:09), and any gaps of at least 60s.  See
-  script for optional args
+  script for optional arguments
+
 get_fcst_time.sh,  argument: 00/06/12/18 {cyc}
   print out a table showing the timing of today's GFS atmos forecast completion
   times (for fcst hours out to 384), and the times for previous days (on disk).
-  Useful when suspecting that today's gfs_forecast is running slow.
+  Useful when suspecting that the current on-going gfs_forecast is running slow
+
 logsrch: search under today's and yesterday's /lfs/h1/ops/prod/output for job
   output. Search by job id (numerical) or job name
+
 rsynclog: for on-going canned transfer jobs only: tail the $DATA/rsync.out file
   to get the current transfer speed for this canned job.  Thanks to Greg for
   the idea of tailing the rsync.out
+
+runtime_plot/ (two short scripts in the dir)
+  extract run time info for a given job from a series of daily run time stats
+  files ($day.runtime.stat), plot a time series of daily run time against that
+  of the running 30/60/90-day averages. 
+  This was not a 'frequently used script'.  I got it to work - more or less -
+  when jstofs_2d_glo_fcst_nowcast was running slow and we were seeing the
+  avg30/avg60/avg90 stats drifing in late January this year
+
 watch_for_time (calls sort_time.py): every 5 min, check for run time left of 
   all jobs whose names contain $arg (argument for this script, e.g. 'gfs' or 
   'nwm'), sort the list by "walltime left", in descending order.  Jobs with 
   10min or less left are listed in red.    
 
+------------------------------------
+misc setup in my .bashrc:
 
-  
+alias vspalog='vim -R -n -c "set nomodifiable" +1 /lfs/h1/ops/prod/logs/spalog'
+  "view spalog" would still create a swap file if the buffer is inadvertently
+  modified.  The setup in the above alias would previous all buffer changes.
+  The '+1' option is to open the file for view from the top.
+
+alias sevtail='watch --interval 30 "grep Sev1 /lfs/h1/ops/prod/com/ecflow/sev_monitor_logs/prevNEL.log | tail"'
+  Keep an eye on latest Sev1's prevNEL.log every 30s, for when you want to see
+  the Sev1's sooner (jsev_monitor runs once every 4 minutes)
+
+function nodesum() {
+  /sfs/admin/scripts/showcc -n | awk '/Current Status/ {print; exit} {print}'
+}
+# This is to run the nodesum (showcc) every 5 minutes:
+export -f nodesum
+alias nodewatch='watch --interval 300 nodesum'
+  showcc is a GDIT script showing summary of all the nodes in the system 
+  (Justin's email, forwarded to you on 2023/04/28).  It also 'curls' the 
+  current CWD info from https://www.nco.ncep.noaa.gov/status/cwd. The 'nodesum'
+  function runs 'showcc' but cuts out the CWD lines.  
+  The 'nodewatch' alias provides a system nodes summary every 5min
+         
